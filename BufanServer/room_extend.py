@@ -22,7 +22,7 @@ def init():
 	### 设置房间类的定义
 	hall_callback.set_class_define(
 			{ ### 游戏模式: (最小人数, 最大人数, 类, 模式名称) 
-				1: (1, 1, bufan_room.BufanRoom, "单人模式", 0),
+				1: (2, 2, bufan_room.BufanRoom, "单人模式", 0),
 			} 
 	)
 

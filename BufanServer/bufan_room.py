@@ -30,7 +30,7 @@ class BufanRoom(hall_object.HallRoom):
 		
 	def onReqLeaveRoom(self, player, msg):
 		self.log.info("[消息处理]玩家请求离开房间 uid:%s hid:%s" %(player.uid, player.hid))
-		self.cghall_tell_player_leave_room(player.hid)
+		self.cghall_tell_hall_player_leave_room(player.hid)
 		
 	def onSetPos(self, player, srcPosX, srcPosY, tgtPosX, tgtPosY):
 		self.log.info("[消息处理]玩家请求移动棋子: sPosX:%s sPosY:%s tPosX:%s tPosY:%s" %(srcPosX, srcPosY, tgtPosX, tgtPosY))

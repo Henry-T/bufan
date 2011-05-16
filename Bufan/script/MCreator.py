@@ -1,14 +1,17 @@
+# iTownSDK 提供了媒体创建显示播放等功能
+#　这里选择游戏中需要用到的进行简单封装
+
 import iworld2d
-import flash
+import flashui
 # 游戏媒体创建
 
 
 # 创建并显示图片
-def CreateImage(path, posX, poxY, scaleX, scaleY):
+def CreateImage(path, posX, posY, scaleX, scaleY):
 	image = iworld2d.image2d(path);
 	image.pos = (posX, posY);
 	image.scale = (scaleX, scaleY);
-	image.brint_to_front();
+	image.bring_to_front();
 	return image;
 
 # 创建并显示模型
@@ -24,7 +27,7 @@ def CreateParticle(path, posX, posY):
 	return particle;
 	
 # 创建影片
-def CreateMovie(path):	// TODO ??
+def CreateMovie(path):	# TODO ??
 	movie = flashui.movie(path, False, True, flashui.SM_NoScale);
 	movie.enable_keyboard = False;
 	timeout = None;
