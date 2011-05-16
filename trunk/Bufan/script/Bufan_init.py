@@ -6,6 +6,7 @@ import Global
 import Message
 import EventMap
 import InGame
+import game
 
 
 def init(**args):
@@ -23,10 +24,11 @@ def init(**args):
 	# 初始化网络
 	Global.API.register_game_room_msgdefine_and_callback(Message.MsgDefine, EventMap.GetEventMap())
 	
+	# 初始化显示
+	iworld2d.init()
+
 	# 开始游戏
 	InGame.Initial()
-
-	iworld2d.init()
 
 
 def ForceDestroy():
@@ -50,6 +52,9 @@ def onKeyMsg (msg, key_code):
 
 def onMouseMsg (msg, key):
 	# 鼠标事件回调
+	if msg == game.MSG_MOUSE_UP:
+		if key == game.MOUSE_BUTTON_LEFT:
+			InGame.MouseClick(game.mouse_x, game.mouse_y)
 	pass
 
 
@@ -57,8 +62,7 @@ def onMouseWheel (msg, delta, key_state):
 	# 鼠标滚轮事件回调
 	pass
 	
-def onClose (eArgs):
-	# 退出
-	# Global.API.sender.hw_cs_leave_room()	# 向服务器发退出消息
-	InGame.Destory()
+def onClose(eArgs):# 退出
+	InGame.Destroy()
 	iworld2d.destroy()
+	Global.API.sender.cs_req_leave()

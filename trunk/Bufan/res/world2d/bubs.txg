@@ -1,0 +1,52 @@
+<NeoX>
+	<TextureGroup
+		Version = "0,0,1,0">
+		<Textures>
+			<Texture
+				Name = "bubs"
+				Filename = "bubs.tga" />
+		</Textures>
+		<Clips>
+			<Clip
+				Name = "1"
+				TexName = "bubs"
+				Pos = "368,4"
+				Size = "48,48" />
+			<Clip
+				Name = "2"
+				TexName = "bubs"
+				Pos = "316,4"
+				Size = "48,48" />
+			<Clip
+				Name = "3"
+				TexName = "bubs"
+				Pos = "264,4"
+				Size = "48,48" />
+			<Clip
+				Name = "4"
+				TexName = "bubs"
+				Pos = "212,4"
+				Size = "48,48" />
+			<Clip
+				Name = "5"
+				TexName = "bubs"
+				Pos = "160,4"
+				Size = "48,48" />
+			<Clip
+				Name = "6"
+				TexName = "bubs"
+				Pos = "108,4"
+				Size = "48,48" />
+			<Clip
+				Name = "7"
+				TexName = "bubs"
+				Pos = "56,4"
+				Size = "48,48" />
+			<Clip
+				Name = "PickBox"
+				TexName = "bubs"
+				Pos = "4,4"
+				Size = "48,48" />
+		</Clips>
+	</TextureGroup>
+</NeoX>
