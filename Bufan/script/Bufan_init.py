@@ -2,11 +2,11 @@
 # 游戏初始化
 
 import iworld2d
+import game
 import Global
 import Message
 import EventMap
-import InGame
-import game
+import GameManager
 
 
 def init(**args):
@@ -27,8 +27,8 @@ def init(**args):
 	# 初始化显示
 	iworld2d.init()
 
-	# 开始游戏
-	InGame.Initial()
+	# 初始化游戏
+	GameManager.Initial()
 
 
 def ForceDestroy():
@@ -54,7 +54,7 @@ def onMouseMsg (msg, key):
 	# 鼠标事件回调
 	if msg == game.MSG_MOUSE_UP:
 		if key == game.MOUSE_BUTTON_LEFT:
-			InGame.MouseClick(game.mouse_x, game.mouse_y)
+			GameManager.MouseClick(game.mouse_x, game.mouse_y)
 	pass
 
 
@@ -63,6 +63,6 @@ def onMouseWheel (msg, delta, key_state):
 	pass
 	
 def onClose(eArgs):# 退出
-	InGame.Destroy()
+	GameManager.Destroy()
 	iworld2d.destroy()
 	Global.API.sender.cs_req_leave()
