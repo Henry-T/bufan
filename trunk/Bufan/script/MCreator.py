@@ -5,6 +5,9 @@ import iworld2d
 import flashui
 # 游戏媒体创建
 
+def initial():
+	iworld2d.init()
+	
 
 # 创建并显示图片
 def CreateImage(path, posX, posY, scaleX, scaleY):

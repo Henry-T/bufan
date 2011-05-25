@@ -22,12 +22,8 @@ class BufanRoom(hall_object.HallRoom):
 	def cghall_on_player_enter_room(self, player, obj):
 		self.log.info("[消息处理]玩家进入房间 uid:%s hid:%s" % (player.uid, player.hid))
 		# 将新玩家纳入管理
-		self.gameMgr.AddPlayer(player.uid)
-		
-		
-		### send score
-		newmsg = self.MsgMgr.sc_get_score(score=player.score)
-		self.cghall_send(player.hid, newmsg)
+		self.gameMgr.AddPlayer(player.hid)
+
 	
 	def cghall_on_player_leave_room(self, hid):
 		if self.gameMgr.InRoom(hid):
@@ -44,7 +40,7 @@ class BufanRoom(hall_object.HallRoom):
 		self.log.info("[消息处理]玩家更改状态 hid:%s 状态:%s" %(player.hid, msg.isReady))
 		self.gameMgr.SetReady(hid, msg.isReady)
 		
-	def onReqLeaveRoom(self, player):
+	def onReqLeaveRoom(self, player, msg):
 		self.log.info("[消息处理]玩家请求离开房间 uid:%s hid:%s" %(player.uid, player.hid))
 		self.gameMgr.RemovePlayer(player.hid)
 		self.cghall_tell_hall_player_leave_room(player.hid)

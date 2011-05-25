@@ -1,12 +1,14 @@
 import MCreator
 
 class Slot:
-	def __init__(self, x, y):
+	def __init__(self, x, y, scaleX = 1, scaleY = 1):
 		# 0-未放置 1~7-各色棋子
 		self.TypeId = 0 
 		self.Image = None
 		self.X = x
 		self.Y = y
+		self.ScaleX = scaleX
+		self.ScaleY = scaleY
 	
 	def Destroy(self):
 		if self.Image:
@@ -30,7 +32,7 @@ class Slot:
 			
 		if self.TypeId > 0:
 			pathStr = "Bufan/res/world2d/bubs.txg|" + str(typeId)
-			self.Image =  MCreator.CreateImage(pathStr, self.X, self.Y, 1, 1)
+			self.Image =  MCreator.CreateImage(pathStr, self.X, self.Y, self.ScaleX, self.ScaleY)
 		
 		
 		

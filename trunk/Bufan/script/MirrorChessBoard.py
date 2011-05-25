@@ -5,13 +5,13 @@ import PathFinder
 import AStarGrid
 import Global
 
-class ChessBoard:
-	def __init__(self, x, y):
+class MirrorChessBoard:
+	def __init__(self, x, y, rangeX, rangeY):
 		# ∆Â≈Ã≥ﬂ¥Á
 		self.SizeX = 9
 		self.SizeY = 9
-		self.SlotW = 50
-		self.SlotH = 50
+		self.SlotW = rangeX / self.SizeX
+		self.SlotH = rangeY / self.SizeY
 		# ∆Â≈ÃŒª÷√
 		self.X = x
 		self.Y = y
@@ -21,7 +21,7 @@ class ChessBoard:
 		for i in range(0, self.SizeX):
 			self.Slots.append([])
 			for j in range(0, self.SizeY):
-				slot = Slot.Slot(self.X + i * self.SlotW, self.Y + j *self.SlotH)
+				slot = Slot.Slot(self.X + i * self.SlotW, self.Y + j *self.SlotH, 0.6, 0.6)
 				self.Slots[i].append(slot)
 				self.EmptySlots.append([i, j])
 		# ªÓ∂Ø∆Â≈Ã∏Ò
@@ -94,8 +94,8 @@ class ChessBoard:
 		if mx < self.X or my < self.Y or mx > self.X + self.SizeX * self.SlotW or my > self.Y + self.SizeY * self.SlotH:
 			return
 		# µ„ª˜Œª÷√ªªÀ„
-		sX = (mx - self.X) / 50 % 9
-		sY = (my - self.Y) / 50 % 9
+		sX = (mx - self.X) / self.SlotW % self.SizeX
+		sY = (my - self.Y) / self.SlotH % self.SizeY
 		print("∆Â≈Ã∏Ò±ªµ„ª˜£∫"+ str(sX) + ","+str(sY))
 		
 		if self.PickedSlot:

@@ -1,10 +1,14 @@
 import Global
+import MCreator
+import flashui
 import GameObject
-import LocalChessBoard
+import LocalChessBoard	# TODO 调试用
+import ClientChessBoard
+import MirrorChessBoard
 
 class PlayScreen():
 	def __init__(self):
-		self.bgImg = iworld2d.image2d("Bufan/res/world2d/background.jpg")
+		self.bgImg = MCreator.CreateImage("Bufan/res/world2d/background_play.jpg", 0, 0, 1, 1)
 		self.bgImg.pos = (0, 0)
 		
 		self.ui = flashui.movie('Bufan/res/gfx/PlayPanel.swf', False, True, flashui.SM_NoScale)
@@ -13,8 +17,8 @@ class PlayScreen():
 		self.now_test = None
 		
 		self.chessBoards = []
-		self.chessBoards[0] = CliantChessBoard.ClientChessBoard(0, 127)
-		self.chessBoards[1] = ClientChessBoard.ClientChessBoard(327, 127)
+		self.chessBoards.append(LocalChessBoard.LocalChessBoard(514, 130, 450, 450))
+		self.chessBoards.append(LocalChessBoard.LocalChessBoard(52, 112, 270, 270))
 
 	def Show(self):
 		self.bgImg.bring_to_front()
@@ -22,12 +26,17 @@ class PlayScreen():
 		self.ui.active = True
 		self.ui.set_top()
 
-	def Destory(self):
+	def Destroy(self):
+		self.bgImg.destroy()
+		
 		self.ui.active = False
 		self.ui = None
+		
+		self.chessBoards[0].Destroy()
+		self.chessBoards[1].Destroy()
 	
 	def onMouseClicked(self, mPosX, mPosY):
-			self.thisChessBoard.Click(mPosX, mPosY)
+			self.chessBoards[0].Click(mPosX, mPosY)
 					
 # ====================================================
 # 棋盘网络信息
