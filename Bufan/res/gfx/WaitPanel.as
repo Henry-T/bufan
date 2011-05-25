@@ -2,12 +2,12 @@
 
 function onLeaveClicked(e:Object)
 {
-	ExternalInterface.call("InGame.RequestLeaveRoom");
+	ExternalInterface.call("GameManager.RequestLeaveRoom");
 }
 
 function onReadyClicked(e:Object)
 {
-	ExternalInterface.call("InGame.GetReady");
+	ExternalInterface.call("GameManager.GetReady");
 }
 
 btn_leave.disableFocus = true;

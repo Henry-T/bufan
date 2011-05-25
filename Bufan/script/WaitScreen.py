@@ -1,56 +1,59 @@
-import iworld2d
+import MCreator
+import flashui
 import Global
 import GameObject
 import LocalChessBoard
 
 class WaitScreen():
 	def __init__(self):
-		self.bgImg = iworld2d.image2d("Bufan/res/world2d/background.jpg")
-		self.bgImg.pos = (0, 0)
+		self.bgImg = MCreator.CreateImage("Bufan/res/world2d/background.jpg", 0, 0, 1, 1) 
+		# 奇怪的问题
 		
 		self.ui = flashui.movie('Bufan/res/gfx/WaitPanel.swf', False, True, flashui.SM_NoScale)
 		self.ui.align = flashui.Align_BottomCenter
 		self.ui.enable_keyboard = False	# ui层不接收键盘消息
 		self.now_test = None
 		
-		lChessBoard = LocalChessBoard.LocalChessBoard(327, 127)
+		self.lChessBoard = LocalChessBoard.LocalChessBoard(327, 127, 450, 450)
 		
 		self.isReady = 0
 
 	def Show(self):
-		self.bgImg.bring_to_front()
-		
 		self.ui.active = True
 		self.ui.set_top()
 
-	def Destory(self):
+	def Destroy(self):
+		self.bgImg.destroy()
+		
 		self.ui.active = False
 		self.ui = None
+		
+		self.lChessBoard.Destroy()
 	
 	def onMouseClicked(self, mPosX, mPosY):
-			if lChessBoard.Click(mx, my) == 0:
+			if self.lChessBoard.Click(mPosX, mPosY) == 0:
 				GameOver()
 			else:
-				lastScore = lChessBoard.GetLastScore()
+				lastScore = self.lChessBoard.GetLastScore()
 				if lastScore > 0:
 					Global.API.show_msg(str(lastScore))
-					ui.lbl_localScore.label  = lChessBoard.Score  # TODO
+					ui.lbl_localScore.label  = self.lChessBoard.Score  # TODO
 	
 	# ====================================================
 	# UI 控制
 	# ====================================================
-	def SetPlayerInfo(which, neckname, win, lose, draw, breakC):
+	def SetPlayerInfo(self, which, nickname, win, lose, draw, breakC):
 		if which == 0:
-			ui.invoke(SetThisInfo, neckname, win, lose, draw, breakC)
+			self.ui.invoke("SetThisInfo", nickname, win, lose, draw, breakC)
 		else:
-			ui.invoke(SetThatInfo, neckname, win, lose, draw, breakC)
+			self.ui.invoke("SetThatInfo", nickname, win, lose, draw, breakC)
 	
 	
 	# ====================================================
 	# 本地训练游戏
 	# ====================================================
 	def localGameOver(self):
-		Global.API.show_confirm("训练游戏结束！是否重来？", lChessBoard.Start(), None)
+		Global.API.show_confirm("训练游戏结束！是否重来？", self.lChessBoard.Start(), None)
 		
 	
 # ====================================================

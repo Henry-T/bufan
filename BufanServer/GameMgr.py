@@ -1,39 +1,40 @@
 import ServerChessBoard
+import Global
 
 class GameMgr:
 	def __init__(self, bufanRoom):
 		# 引用房间实例
 		self.room = bufanRoom
 		# 房间内玩家Id
-		self.hostId = None
-		self.joinId = None
-		self.hostReady = 0
-		self.joinReady = 0
+		self.hids = []
+		self.readys = []
 	
 	def AddPlayer(self, hid):
 		# 发送欢迎消息
 		welcome = self.room.MsgMgr.sc_welcome(chid=hid)
 		self.room.cghall_send(hid, welcome)
 		
-		# 保存玩家Id
-		if not self.hostId:
-			hostId = hid
-		elif not self.joinId:
-			joinId = hid
-			# 将房主信息发送给加入者
-			h = self.room.cghall_get_player_by_hid(joinId)
-			playerInfo = self.room.MsgMgr.sc_player_info(neckname=h.neckname, hid=h.hid, win=h.win_count, draw=h.draw_count, lose=h.lose_count, breakC=h.break_count)
-			self.room.cghall_send(joinId, playerInfo)
+		# 添加玩家Id
+		self.hids.append(hid)
 			
 		# 将新加入者的信息发送给所有人
 		p = self.room.cghall_get_player_by_hid(hid)
-		playerInfo = self.room.MsgMgr.sc_player_info(neckname=p.neckname, hid=p.hid, win=p.win_count, draw=p.draw_count, lose=p.lose_count, breakC=p.break_count)
-		self.room.cghall_send(hostId, playerInfo)
-		self.room.cghall_send(joinId, playerInfo)
+		Global.WriteLog("加入者的hid: %s" % (hid))
+		playerInfo = self.room.MsgMgr.sc_player_info(nickname=p.nickname, hid=p.hid, win=p.win_count, draw=p.draw_count, lose=p.lose_count, breakC=p.break_count)
+		for i in range(0, len(self.hids)):
+			self.room.cghall_send(self.hids[i], playerInfo)
+		
+		# 如果房间内已经有人，将已有玩家信息发送给新玩家
+		if len(self.hids) == 2:
+			host = self.room.cghall_get_player_by_hid(self.hids[0])
+			playerInfo = self.room.MsgMgr.sc_player_info(nickname=host.nickname, hid=host.hid, win=host.win_count, draw=host.draw_count, lose=host.lose_count, breakC=host.break_count)
+			self.room.cghall_send(self.hids[1], playerInfo)
+			
 	
 	def InRoom(self, hid):
-		if self.hostId == hid or self.joinId == hid:
-			return 1
+		for i in range(0, len(self.hids)):
+			if self.hids[i] == hid:
+				return 1
 		return 0
 		
 	def RemovePlayer(self, hid):
@@ -44,9 +45,10 @@ class GameMgr:
 	
 	# 通知房间内玩家有人离开
 	def TellLeave(self, hid):
+		self.hids.remove(hid)
 		leaveInfo = self.room.MsgMgr.sc_playerLeft(chid = hid)
-		self.room.cghall_send(hostId, leaveInfo)
-		self.room.cghall_send(joinId, leaveInfo)
+		for i in range(0, len(self.hids)):
+			self.room.cghall_send(self.hids[i], leaveInfo)
 		
 		
 	

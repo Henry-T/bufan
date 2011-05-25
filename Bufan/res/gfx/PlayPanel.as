@@ -1,22 +1,14 @@
 ﻿import flash.external.*
 
-function onLeaveClicked(e:Object)
+
+function onBreakClicked(e:Object)
 {
-	ExternalInterface.call("InGame.RequestLeaveRoom");
+	ExternalInterface.call("GameManager.Break");
 }
 
-function onReadyClicked(e:Object)
-{
-	ExternalInterface.call("InGame.GetReady");
-}
-
-btn_leave.disableFocus = true;
-btn_leave.label = "退出";
-btn_leave.addEventListener("click", this, "onLeaveClicked");
-
-btn_ready.disableFocus = true;
-btn_ready.label = "准备";
-btn_ready.addEventListener("click", this, "onReadyClicked");
+btn_break.disableFocus = true;
+btn_break.label = "认输";
+btn_break.addEventListener("click", this, "onBreakClicked");
 
 
 function SetThisInfo(neck:String, winC:Number, drawC:Number, lose:Number, breakC:Number)

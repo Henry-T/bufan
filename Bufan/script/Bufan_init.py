@@ -1,7 +1,7 @@
 # -*- coding:GBK -*-
 # 游戏初始化
 
-import iworld2d
+import MCreator
 import game
 import Global
 import Message
@@ -22,10 +22,10 @@ def init(**args):
 		on_mouse_wheel =  onMouseWheel)
 
 	# 初始化网络
-	Global.API.register_game_room_msgdefine_and_callback(Message.MsgDefine, EventMap.GetEventMap())
-	
-	# 初始化显示
-	iworld2d.init()
+	Global.API.register_game_room_msgdefine_and_callback(Message.MsgDefine, EventMap.EventMap)
+
+	# 初始化媒体
+	MCreator.initial()
 
 	# 初始化游戏
 	GameManager.Initial()
@@ -63,6 +63,6 @@ def onMouseWheel (msg, delta, key_state):
 	pass
 	
 def onClose(eArgs):# 退出
-	GameManager.Destroy()
-	iworld2d.destroy()
+	# GameManager.Destroy()
+	# iworld2d.destroy()
 	Global.API.sender.cs_req_leave()

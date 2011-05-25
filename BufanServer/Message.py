@@ -5,11 +5,13 @@ MsgDefine = {
 	# 欢迎信息
 	"sc_welcome":{"chid":"I"},
 	# 发送玩家数据
-	"sc_player_info":{'neckname':'s','hid':'I','win':'I', 'lose':'I', 'draw':'I', 'breakC':'I'},
+	"sc_player_info":{'nickname':'s','hid':'I','win':'I', 'lose':'I', 'draw':'I', 'breakC':'I'},
 	# 客户端准备状态更改
 	"cs_setReady":{"isReady":"i"},
 	# 客户端请求离开
 	"cs_req_leave":{},
+	# 客户端离开
+	"sc_playerLeft":{"chid":"I"},
 	
 	# ===========================================
 	# 游戏逻辑消息
