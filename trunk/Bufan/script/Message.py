@@ -4,7 +4,7 @@ MsgDefine = {
 	# ===========================================
 	# 游戏状态消息
 	# ===========================================
-	# 欢迎信息
+	# 欢迎信息 如果客户端可以直接获取自己的Hid，就可以删掉这个消息
 	"sc_welcome":{"chid":"I"},
 	# 发送玩家数据
 	"sc_playerInfo":{'nickname':'s','hid':'I','win':'I', 'lose':'I', 'draw':'I', 'breakC':'I'},
@@ -24,14 +24,14 @@ MsgDefine = {
 	# ===========================================
 	# 准备棋子 s的长度是棋子的数量
 	"sc_this_prepBubs":{'colors':'s'},
-	# 移动 四个char，分别代表StartX，StartY，EndX，EndY
-	"cs_this_move":{'sX':'i', 'sY':'i', 'eX':'i', 'eY':'i'},
+	# 移动 消息对象包含路径点
+	"cs_this_move":{'points':"s"},
 	# 确认移动
-	"sc_this_move":{},
+	"sc_this_move":{"isOK":"i"},
 	# 消除 lineInfo 依次是起点终点对的xy坐标，4个长度一组
 	"cs_this_remove":{"lineInfo":'s'},
 	# 确认消除
-	"cs_this_remove":{}
+	"cs_this_remove":{"isOK":"i"},
 	# 放置棋子 放置棋子数量是positions的长度除以2
 	"sc_this_putBubs":{'positons':'s'},
 	
@@ -45,7 +45,7 @@ MsgDefine = {
 	# 移动棋子
 	"sc_that_move":{"sX":"i", "sY":"i", "eX":"i", "eY":"i"},
 	# 消除棋子
-	"sc_that_remove":{"lineInfo":"s"},
+	"sc_that_remove":{"lineInfo":"s", "score":"i"},
 	# 放置棋子
 	"sc_that_putBubs":{"positions":"s"}
 }

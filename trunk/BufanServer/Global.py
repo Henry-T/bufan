@@ -2,6 +2,7 @@ import log
 
 Room = None
 MsgMgr = None
+GameMgr = None
 
 def init(room):
 	global Room, MsgMgr
