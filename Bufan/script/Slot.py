@@ -1,38 +1,37 @@
 import MCreator
 
+# 棋盘格类，保存格子的图片、位置和类型
 class Slot:
 	def __init__(self, x, y, scaleX = 1, scaleY = 1):
 		# 0-未放置 1~7-各色棋子
-		self.TypeId = 0 
-		self.Image = None
 		self.X = x
 		self.Y = y
-		self.ScaleX = scaleX
-		self.ScaleY = scaleY
+		
+		self.typeId = 0
+		self.image = None
+		self.scaleX = scaleX
+		self.scaleY = scaleY
 	
 	def Destroy(self):
-		if self.Image:
-			self.Image.destroy()
-			self.Image = None
+		if self.image:
+			self.image.destroy()
+			self.image = None
 			
-	# 选择
 	def CanPick(self):
 		if self.TypeId != 0:
 			return 1;
 		else:
 			return 0;
 	
-	# 设置棋盘格类型
 	def SetType(self, typeId):
 		self.TypeId = typeId
-		# 清除棋子
-		if self.Image:
-			self.Image.destroy()
-			self.Image = None
+		if self.image:
+			self.image.destroy()
+			self.image = None
 			
 		if self.TypeId > 0:
 			pathStr = "Bufan/res/world2d/bubs.txg|" + str(typeId)
-			self.Image =  MCreator.CreateImage(pathStr, self.X, self.Y, self.ScaleX, self.ScaleY)
+			self.image =  MCreator.CreateImage(pathStr, self.X, self.Y, self.scaleX, self.scaleY)
 		
 		
 		

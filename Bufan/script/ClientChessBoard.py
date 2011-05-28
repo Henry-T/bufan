@@ -4,47 +4,42 @@ import MCreator
 import PathFinder
 import AStarGrid
 import Global
+import Rectangle
 
 class ClientChessBoard:
-	def __init__(self, x, y, rangeX, rangeY):
-		# 棋盘尺寸
-		self.SizeX = 9
-		self.SizeY = 9
-		self.SlotW = rangeX / self.SizeX
-		self.SlotH = rangeY / self.SizeY
-		# 棋盘位置
-		self.X = x
-		self.Y = y
-		# 初始化棋盘格
+	def __init__(self, x, y, sizeX, sizeY):
+		self.rect = Rectangle.Rectangle(x, y, sizeX, sizeY)
+		
+		self.BoardW = 9
+		self.BoardH = 9
+		self.SlotW = self.rect.Width / self.BoardW
+		self.SlotH = self.rect.Height / self.BoardH
+		
 		self.Slots = []
 		self.EmptySlots = []
-		for i in range(0, self.SizeX):
+		for i in range(0, self.BoardW):
 			self.Slots.append([])
-			for j in range(0, self.SizeY):
+			for j in range(0, self.BoardH):
 				slot = Slot.Slot(self.X + i * self.SlotW, self.Y + j *self.SlotH)
 				self.Slots[i].append(slot)
 				self.EmptySlots.append([i, j])
-		# 活动棋盘格
+				
 		self.PickedSlot = None
-		# 选中框
 		self.PickBox = None
-		# 等待棋盘格
+		
 		self.WaitSlots = []
-		# 上次回合得分
 		self.lastScore = 0
-		# 放置初始棋子
+		
 		self.RDPrepSlot(3)
 		self.RDPutSlot()
-	
-		# 准备下一轮
 		self.RDPrepSlot(3)
-	
+		
 	# 重来
 	def Restart(self):
 		del self.EmptySlots[:]
 		del self.WaitSlots[:]
-		for i in range(0, self.SizeX):
-			for j in range(0, self.SizeY):
+		for i in range(0, self.BoardW):
+			for j in range(0, self.BoardH):
 				self.Slots[i][j].SetType(0)
 				self.EmptySlots.append([i, j])
 		self.lastScore = 0
@@ -58,8 +53,8 @@ class ClientChessBoard:
 		
 	# 清理
 	def Destroy(self):
-		for i in range(0, self.SizeX):
-			for j in range(0, self.SizeY):
+		for i in range(0, self.BoardW):
+			for j in range(0, self.BoardH):
 				self.Slots[i][j].Destroy()
 		del self.Slots[:]
 		
@@ -90,12 +85,12 @@ class ClientChessBoard:
 	
 	# 点击棋盘
 	def Click(self, mx, my):
-		# 判断点击范围
-		if mx < self.X or my < self.Y or mx > self.X + self.SizeX * self.SlotW or my > self.Y + self.SizeY * self.SlotH:
+		slotPos = self.rect.GetSubGridPos(mx, my, self.SlotW, self.SlotH)
+		if slotPos == None
 			return
-		# 点击位置换算
-		sX = (mx - self.X) / self.SlotW % self.SizeX
-		sY = (my - self.Y) / self.SlotH % self.SizeY
+		
+		sX = slotPos[0]
+		sY = slotPos[1]
 		print("棋盘格被点击："+ str(sX) + ","+str(sY))
 		
 		if self.PickedSlot:
@@ -111,7 +106,7 @@ class ClientChessBoard:
 				
 				for i in self.EmptySlots:
 					obsList.remove(i)
-				aStarGrid = AStarGrid.AStarGrid(self.SizeX, self.SizeY, self.GetSlotPos(self.PickedSlot), [sX, sY], obsList)
+				aStarGrid = AStarGrid.AStarGrid(self.BoardW, self.BoardH, self.GetSlotPos(self.PickedSlot), [sX, sY], obsList)
 				pFinder.SetGrid(aStarGrid)
 				if len(pFinder.FindPath()) > 0:
 					if self.move(sX, sY)  == 0:
@@ -131,6 +126,9 @@ class ClientChessBoard:
 			if self.Slots[sX][sY].CanPick() == 1:
 				self.PickedSlot = self.Slots[sX][sY]
 				self.ShowPickBox()
+	
+	def InRange(x, y):
+		
 	
 	# 移动棋子
 	def move(self, dX, dY):
@@ -206,7 +204,7 @@ class ClientChessBoard:
 		# 检查当前格
 		sX = x + dX
 		sY = y + dY
-		if sX >= 0 and sX <self.SizeX and sY >= 0 and sY < self.SizeY and self.Slots[sX][sY].TypeId == typeId:
+		if sX >= 0 and sX <self.BoardW and sY >= 0 and sY < self.BoardH and self.Slots[sX][sY].TypeId == typeId:
 			vList.append([sX, sY])
 			# 继续检查
 			return self.validDir(dX, dY, sX, sY, typeId, vList)

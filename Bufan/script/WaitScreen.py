@@ -7,7 +7,6 @@ import LocalChessBoard
 class WaitScreen():
 	def __init__(self):
 		self.bgImg = MCreator.CreateImage("Bufan/res/world2d/background.jpg", 0, 0, 1, 1) 
-		# 奇怪的问题
 		
 		self.ui = flashui.movie('Bufan/res/gfx/WaitPanel.swf', False, True, flashui.SM_NoScale)
 		self.ui.align = flashui.Align_BottomCenter
@@ -31,13 +30,14 @@ class WaitScreen():
 		self.lChessBoard.Destroy()
 	
 	def onMouseClicked(self, mPosX, mPosY):
-			if self.lChessBoard.Click(mPosX, mPosY) == 0:
-				GameOver()
-			else:
-				lastScore = self.lChessBoard.GetLastScore()
-				if lastScore > 0:
-					Global.API.show_msg(str(lastScore))
-					ui.lbl_localScore.label  = self.lChessBoard.Score  # TODO
+		lastScore = lChessBoard.Score
+		if self.lChessBoard.Click(mPosX, mPosY) == 0:
+			GameOver()
+		else:
+			thisScore = self.lChessBoard.GetLastScore()
+			if thisScore > lastScore:
+				Global.API.show_msg(str(thisScore - lastScore))
+				ui.lbl_localScore.label  = thisScore
 	
 	# ====================================================
 	# UI 控制

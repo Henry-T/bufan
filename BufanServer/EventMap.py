@@ -1,9 +1,9 @@
 import BufanRoom
 
 EventMap = {
-	"cs_setReady'":BufanRoom.BufanRoom.onSetReady,
-	"cs_req_leave": BufanRoom.BufanRoom.onReqLeaveRoom,
+	"cs_setReady'":BufanRoom.BufanRoom.onNetSetReady,
+	"cs_reqLeave": BufanRoom.BufanRoom.onNetReqLeaveRoom,
 	
-	"cs_move":BufanRoom.BufanRoom.onMove,
-	"cs_remove":BufanRoom.BufanRoom.onRemove,
+	"cs_this_move":BufanRoom.BufanRoom.onNetMove,
+	"cs_this_remove":BufanRoom.BufanRoom.onNetRemove,
 	}
