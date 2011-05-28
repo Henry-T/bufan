@@ -67,10 +67,10 @@ def onReadyClicked():
 	import GameManager
 	wait = GameManager.scr_wait
 	if wait.isReady == 0:
-		Global.API.sender.cs_setReady(isReady=1)
+		Global.Sender.cs_setReady(isReady=1)
 		wait.isReady = 1
 	else:
-		Global.API.sender.cs_setReady(isReady=0)
+		Global.Sender.cs_setReady(isReady=0)
 		wait.isReady = 0
 	
 def onLeaveClicked():

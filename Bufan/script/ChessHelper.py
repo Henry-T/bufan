@@ -26,16 +26,17 @@ def RemovesToStr(removes):
 		for j in range(0, 4):
 			removesStr.append(chr(removes[i][j]))
 	return removesStr
+		
+def StrToColors(colorStr):
+	colors = []
+	for i in range(0, len(colorStr)):
+		colors.append(int(ord(colorStr[i, 1])))
+	return colors
 	
-def TypesToStr(types):
-	typesStr = ""
-	for i in range(0, len(types)):
-		typeStr.append(chr(types[i]))
-	return typeStr
-	
-def PossToStr(poss):
-	possStr = ""
-	for i in range(0, poss):
-		possStr.append(chr(poss[i]))
+def StrToPoss(posStr):
+	poss = []
+	for i in range(0, len(posStr)):
+		poss.append(int(ord(posStr[i, 1])))
+	return poss
 
 	

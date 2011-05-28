@@ -1,4 +1,5 @@
 import Global
+import MathHelper
 import ChessHelper
 
 class ServerChessBoard:
@@ -49,13 +50,60 @@ class ServerChessBoard:
 		thatPutBubsMsg = Global.MsgMgr.sc_that_putBubs(positons=possStr)
 		Global.GameMgr.SendOppositeMsg(self.Player.Hid, thatPutBubsMsg)
 		
-	def TryMove():
-		# TODO
-		pass
+	def TryMove(points):
+		startP = points[0]
+		for i in range(1, len(points)):
+			midP = points[i]
+			for x in range(MathHelper.GetSmall(startP[0], midP[0]), MathHelper.GetBig(startP[0], midP[0])+1):
+				for y in range(MathHelper.GetSmall(startP[1], midP[1]), MathHelper.GetBig(startP[0], midP[0])+1):
+					if not self.SlotTypes[x][y] == 0
+						return 0
+			startP = points[i]
+		# 移动
+		startP = points[0]
+		endP = points[len(points)-1]
+		SlotTypes[endP[0]][endP[1]] = SlotTypes[startP[0]][startP[1]]
+		SlotTypes[startP[0]][startP[1]] = 0
+		return 1
 		
-	def TryRemove():
-		# TODO
-		pass
+	def TryRemove(removes):
+		addScore = 0
+		for i in range(0, len(removes)):
+			sX = removes[i][0]
+			sY = removes[i][1]
+			eX = removes[i][2]
+			eY = removes[i][3]
+			count = 0
+			if sX == eX:
+				count = abs(sY - eY) # 使用标准函数
+			else:
+				count = abs(sX - eX)
+			if count == 0:
+				return 0
+			colorType = self.SlotTypes[sX][sY]
+			for x in range(MathHelper.GetSmall(sX, eX), MathHelper.GetBig(sY, eY)):
+				for y in range(MathHelper.GetSmall(sY, eY), MathHelper.GetBig(sY, eY)):
+					if not self.SlotTypes[x][y] == colorType
+						return 0
+			# 确认完毕，实施消除
+			for x in range(MathHelper.GetSmall(sX, eX), MathHelper.GetBig(sY, eY)):
+				for y in range(MathHelper.GetSmall(sY, eY), MathHelper.GetBig(sY, eY)):
+					self.SlotTypes[x][y] = 0
+			addScore += count
+		self.Score += addScore
+		return 1
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		
