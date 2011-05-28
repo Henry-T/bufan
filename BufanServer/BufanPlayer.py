@@ -1,36 +1,44 @@
-import  hall_player
 import random
+import Global
+import ServerChessBoard
 
-class BufanPlayer(HallPlayer):
-	def __inti__(self, room):
-		HallPlayer.__init__(self)
+class BufanPlayer():
+	# Error计数，达到3次判定客户端是不安全的
+	def __inti__(self, hid):
+		self.Hid = hid
+		self.IsReady = 0
 		
-		self.room = room
-		self.WaitSlots = []
+		self.ServerChessBoard = None
 	
-	def sendMsg(self, msg):
-		self.room.cghall_send(self.hid, obj)
+	def SendMsg(self, msg):
+		Global.Room.cghall_send(self.hid, obj)
 	
-	def RDPrepSlot(self, num):
-		colorStr = ""
-		for i in range(0, num):
-			typeId = random.randint(1, 7)
-			self.WaitSlots.append(typeId)
-			colorStr += string(typeId)
-		
-		msg = self.room.MsgMgr.sc_prepBubs(colors=colorStr)
-		self.sendMsg(msg)
+	def StartGame(self):
+		self.ServerChessBoard =  ServerChessBoard.ServerChessBoard()
 	
-	def RDPutSlot(self):
-		for i in range(0, len(self.WaitSlots)):
-			id = random.randint(0, len(self.EmptySlots) - 1)
-			x =  self.EmptySlots[id][0]
-			y =  self.EmptySlots[id][1]
-			self.Slots[x][y].SetType(self.WaitSlots[i])
-			self.EmptySlots.remove([x, y])
-		# 清空列表
-		del self.WaitSlots[:]
-		
+	def EndGame(self):
+		self.ServerChessBoard.Destroy()
+		self.ServerChessBoard = None
+		self.IsReady = 0
+		Global.Room.cghall_tell_player_ready(self.Hid, 0)
+	
+	def RemoteMove(self, points):
+		ok = self.ChessBoard.TryMove(points)
+		thisMoveMsg = Global.MsgMgr.sc_this_move(isOk=ok)
+		sendMsg(thisMoveMsg)
+		if ok == 1:
+			# TODO 获取始末点
+			thatMoveMsg = Global.MsgMgr.sc_that_move(... )
+			Global.GameMgr.SendOppositeMsg(self.hid, thatMoveMsg)
+			
+	def RemoteRemove(self, removes):
+		ok = self.ChessBoard.TryRemove(removes)
+		thisRemoveMsg = Global.MsgMgr.sc_this_remove(isOk=ok)
+		sendMsg(thisMoveMsg)
+		if ok == 1:
+			# TODO 转换消除线信息
+			thatRemoveMsg = Global.MsgMgr.sc_that_remove(... )
+			Global.GameMgr.SendOppositeMsg(self.hid, thatRemoveMsg)
 		
 		
 	

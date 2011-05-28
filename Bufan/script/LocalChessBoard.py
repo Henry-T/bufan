@@ -27,7 +27,7 @@ class ClientChessBoard:
 		self.PickedSlot = None
 		self.PickBox = None
 		
-		self.WaitSlots = []
+		self.WaitTpyes = []
 		
 		self.Score = 0
 		self.GameOver = 0
@@ -38,7 +38,7 @@ class ClientChessBoard:
 		
 	def Restart(self):
 		del self.EmptySlots[:]
-		del self.WaitSlots[:]
+		del self.WaitTpyes[:]
 		for i in range(0, self.BoardW):
 			for j in range(0, self.BoardH):
 				self.Slots[i][j].SetType(0)
@@ -66,16 +66,16 @@ class ClientChessBoard:
 	def RDPrepSlot(self, num):
 		for i in range(0, num):
 			typeId = random.randint(1, 7)
-			self.WaitSlots.append(typeId)
+			self.WaitTpyes.append(typeId)
 	
 	def RDPutSlot(self):
-		for i in range(0, len(self.WaitSlots)):
+		for i in range(0, len(self.WaitTpyes)):
 			id = random.randint(0, len(self.EmptySlots) - 1)
 			x =  self.EmptySlots[id][0]
 			y =  self.EmptySlots[id][1]
-			self.Slots[x][y].SetType(self.WaitSlots[i])
+			self.Slots[x][y].SetType(self.WaitTpyes[i])
 			self.EmptySlots.remove([x, y])
-		del self.WaitSlots[:]
+		del self.WaitTpyes[:]
 	
 	def Click(self, mx, my):
 		slotPos = self.rect.GetSubGridPos(mx, my, self.SlotW, self.SlotH)
