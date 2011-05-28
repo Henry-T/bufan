@@ -29,7 +29,6 @@ class PathFinder:
 		self.openList.append(curNode)
 		print(self.openList)
 		while len(self.openList) > 0:
-			print("开放表长: " + str(len(self.openList)))
 			# 获取开放集中F最小的节点
 			lowFNode = self.openList[0]
 			for i in range(1, len(self.openList)):
@@ -39,12 +38,10 @@ class PathFinder:
 			if lowFNode == endNode:
 				return self.constructPath(endNode)
 			
-			print("搜索中心点: " + str(lowFNode.X) + "-" + str(lowFNode.Y))
 			self.openList.remove(lowFNode)
 			self.closeList.append(lowFNode)
 			
 			# 搜索临域
-			print("临域节点数量："+str(len(grid.GetNeighborNodes(lowFNode))))
 			for node in grid.GetNeighborNodes(lowFNode):
 				if self.nodeInList(node, self.closeList):
 					continue
@@ -53,13 +50,10 @@ class PathFinder:
 				if self.nodeInList(node, self.openList) == 0:
 					self.openList.append(node)
 					betterNode = 1
-					print("新增优势节点")
 				elif tempG < node.G:
 					betterNode = 1
-					print("标记为优")
 				else :
 					betterNode = 0
-					print("标记为劣")
 					
 				if betterNode == 1:
 					node.Parent = lowFNode

@@ -2,7 +2,7 @@
 # 游戏初始化
 
 import MCreator
-import game
+import Input
 import Global
 import Message
 import EventMap
@@ -10,59 +10,37 @@ import GameManager
 
 
 def init(**args):
-	gameId = int(args['gameid'])
-	
 	Global.init()
-
-	# 注册回调
-	Global.API.register_callback( gameId,
-		Logic, Render, PostLogic,
-		on_key_msg = onKeyMsg, 
+	Global.API.register_callback( int(args['gameid']),
+		Logic, Render, None,
+		on_key_msg = None, 
 		on_mouse_msg = onMouseMsg, 
-		on_mouse_wheel =  onMouseWheel)
-
-	# 初始化网络
+		on_mouse_wheel =  None)
 	Global.API.register_game_room_msgdefine_and_callback(Message.MsgDefine, EventMap.EventMap)
-
-	# 初始化媒体
 	MCreator.initial()
-
-	# 初始化游戏
 	GameManager.Initial()
-
-
-def ForceDestroy():
-	pass
 	
-# 回调函数
 def Logic ():
+	# TODO 动画更新
 	pass
-
 	
-def PostLogic ():
-	pass
 	
 def Render ():
+	# TODO 动画效果
 	pass
-	
-def onKeyMsg (msg, key_code):
-	# 键盘事件回调
-	pass
-
 
 def onMouseMsg (msg, key):
-	# 鼠标事件回调
-	if msg == game.MSG_MOUSE_UP:
-		if key == game.MOUSE_BUTTON_LEFT:
-			GameManager.MouseClick(game.mouse_x, game.mouse_y)
-	pass
-
-
-def onMouseWheel (msg, delta, key_state):
-	# 鼠标滚轮事件回调
-	pass
+	if Input.IsLeftClicked():
+		GameManager.MouseClick(game.mouse_x, game.mouse_y)
 	
 def onClose(eArgs):# 退出
-	# GameManager.Destroy()
-	# iworld2d.destroy()
-	Global.API.sender.cs_req_leave()
+	GameManager.Destroy()
+	iworld2d.destroy()
+	Global.Sender.cs_req_leave()
+	
+	
+#def PostLogic ():
+#	pass
+
+#def ForceDestroy():
+#	pass

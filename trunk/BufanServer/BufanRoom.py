@@ -15,15 +15,13 @@ class BufanRoom(hall_object.HallRoom):
 		self.MsgMgr = hall_callback.get_game_room_msgmgr()
 		
 		# 玩家管理器
-		self.gameMgr = GameMgr.GameMgr(self)
-	
-	
+		self.gameMgr = GameMgr.GameMgr()
+			
 	##  重载  ########
 	def cghall_on_player_enter_room(self, player, obj):
 		self.log.info("[消息处理]玩家进入房间 uid:%s hid:%s" % (player.uid, player.hid))
 		# 将新玩家纳入管理
 		self.gameMgr.AddPlayer(player.hid)
-
 	
 	def cghall_on_player_leave_room(self, hid):
 		if self.gameMgr.InRoom(hid):
@@ -36,19 +34,50 @@ class BufanRoom(hall_object.HallRoom):
 			# 不做处理
 			pass
 			
-	def onSetReady(self, player, msg):
+	def onNetSetReady(self, player, msg):
 		self.log.info("[消息处理]玩家更改状态 hid:%s 状态:%s" %(player.hid, msg.isReady))
 		self.gameMgr.SetReady(hid, msg.isReady)
 		
-	def onReqLeaveRoom(self, player, msg):
+	def onNetReqLeaveRoom(self, player, msg):
 		self.log.info("[消息处理]玩家请求离开房间 uid:%s hid:%s" %(player.uid, player.hid))
 		self.gameMgr.RemovePlayer(player.hid)
 		self.cghall_tell_hall_player_leave_room(player.hid)
 	
-	def onMove(self, player, msg):
+	def onNetMove(self, player, msg):
 		self.log.info("[消息处理]玩家请求移动棋子 hid:%s" %(player.hid))
-		self.gameMgr.PlayerMove(player.hid, msg)
+		self.gameMgr.PlayerMove(player.hid, msg.sX, msg.sY, msg.eX, msg.eY)
 	
-	def onRemove(self, player, msg):
+	def onNetRemove(self, player, msg):
 		self.log.info("[消息处理]玩家请求消除连线 hid:%s" %(player.hid))
-		self.gameMgr.PlayerRemove(player.hid, msg)
+		self.gameMgr.PlayerRemove(player.hid, strToRemoves(msg.lineInfo))
+
+	def strToRemoves(removeNum,removeStr):
+		removes = []
+		for i in range(0, removeNum):
+			removes.append([])
+			for j in range(0, 4):
+				removes[i].append(int(ord(removeStr[i * 4 + j, 1])))
+		return removes
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
