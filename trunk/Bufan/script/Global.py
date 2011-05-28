@@ -2,7 +2,7 @@ import iapi
 
 
 API = None
-Sender
+Sender = None
 
 def init():
 	global API, Sender

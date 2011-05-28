@@ -7,6 +7,7 @@ import Global
 import WaitScreen
 import PlayScreen
 import Bufan_init
+import ChessHelper
 
 # 0-Wait 1-Play
 gameState = 0
@@ -109,12 +110,12 @@ def onNetThisPrepBubs(msg):
 def onNetThisMove(msg):
 	global gameState, scr_play
 	if gameState == 1:
-		scr_play.OnNetThisMove()
+		scr_play.OnNetThisMove(msg.isOK)
 
 def onNetThisRemove(msg):
 	global gameState, scr_play
 	if gameState == 1:
-		scr_play.OnNetThisRemove()
+		scr_play.OnNetThisRemove(msg.isOK)
 
 def onNetThisPutBubs(msg):
 	global gameState, scr_play
@@ -125,7 +126,7 @@ def onNetThisPutBubs(msg):
 def onNetThatPrepBubs(msg):
 	global gameState, scr_play
 	if gameState == 1:
-		scr_play.OnNetThatPrepBubs(strToColors(msg.colors))
+		scr_play.OnNetThatPrepBubs(ChessHelper.StrToColors(msg.colors))
 		
 
 def onNetThatMove(msg):
@@ -138,36 +139,15 @@ def onNetThatMove(msg):
 def onNetThatRemove(msg):
 	global gameState, scr_play
 	if gameState == 1:
-		scr_play.OnNetThatRemove(strToRemoves(msg.lineInfo))
+		scr_play.OnNetThatRemove(ChessHelper.StrToRemoves(msg.lineInfo))
 		
 
 def onNetThatPutBubs(msg):
 	global gameState, scr_play
 	if gameState == 1:
-		scr_play.OnNetThatPutBubs(strToPoss(msg.positions))
+		scr_play.OnNetThatPutBubs(ChessHelper.StrToPoss(msg.positions))
 		
-		
-def strToColors(colorStr):
-	colors = []
-	for i in range(0, len(colorStr)):
-		colors.append(int(ord(colorStr[i, 1])))
-	return colors
 	
-def strToPoss(posStr):
-	poss = []
-	for i in range(0, len(posStr)):
-		poss.append(int(ord(posStr[i, 1])))
-	return poss
-
-def strToRemoves(removeNum,removeStr):s
-	removes = []
-	for i in range(0, removeNum):
-		removes.append([])
-		for j in range(0, 4):
-			removes[i].append(int(ord(removeStr[i * 4 + j, 1])))
-	return removes
-
-
 
 
 

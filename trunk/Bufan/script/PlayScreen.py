@@ -17,8 +17,8 @@ class PlayScreen():
 		self.now_test = None
 		
 		self.chessBoards = []
-		self.chessBoards.append(LocalChessBoard.LocalChessBoard(514, 130, 450, 450))
-		self.chessBoards.append(LocalChessBoard.LocalChessBoard(52, 112, 270, 270))
+		self.chessBoards.append(ClientChessBoard.ClientChessBoard(514, 130, 450, 450))
+		self.chessBoards.append(MirrorChessBoard.MirrorChessBoard(52, 112, 270, 270))
 
 	def Show(self):
 		self.bgImg.bring_to_front()
@@ -41,12 +41,32 @@ class PlayScreen():
 # ====================================================
 # 棋盘网络信息
 # ====================================================
-def onNetPrepBubs():
-	#Global.API.
-	pass
+def onNetThisPrepBubs(colors):
+	self.chessBoards[0].OnNetPrepSlots(colors)
 
-def onNetMove(self):
-	Global.API.show_confirm("训练游戏结束！是否重来？", lChessBoard.Start(), None)
+def onNetThisMove(isOk):
+	if valide == 1:
+		self.chessBoards[0].OnNetMove(isOk)
+
+def onNetThisRemove(isOk):
+	if valid == 1
+		self.chessBoards[0].OnNetRemove(isOk)
+
+def onNetThisPutBubs(poss):
+	self.chessBoards[0].OnNetPutBubs(poss)
+
+	
+def onNetThatPrepBubs(colors):
+	self.chessBoards[1].OnNetPrepSlots(colors)
+	
+def onNetThatMove(points):
+	self.chessBoards[1].OnNetMove(points)
+
+def onNetThatRemove(removes):
+	self.chessBoards[1].OnNetRemove(removes)
+
+def onNetThatPutBubs(poss):
+	self.chessBoards[1].OnNetPutSlots(poss)
 	
 	
 		

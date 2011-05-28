@@ -21,13 +21,11 @@ class PathFinder:
 		grid = self.grid
 		self.openList = []
 		self.closeList = []
-		grid = self.grid
 		
 		curNode  = grid.StartNode
 		endNode = grid.EndNode
 		
 		self.openList.append(curNode)
-		print(self.openList)
 		while len(self.openList) > 0:
 			# 获取开放集中F最小的节点
 			lowFNode = self.openList[0]

@@ -27,8 +27,8 @@ class BufanPlayer():
 		thisMoveMsg = Global.MsgMgr.sc_this_move(isOk=ok)
 		sendMsg(thisMoveMsg)
 		if ok == 1:
-			# TODO 获取始末点
-			thatMoveMsg = Global.MsgMgr.sc_that_move(... )
+			pointsStr = ChessHelper.MoveToStr(points)
+			thatMoveMsg = Global.MsgMgr.sc_that_move(pointsStr)
 			Global.GameMgr.SendOppositeMsg(self.hid, thatMoveMsg)
 			
 	def RemoteRemove(self, removes):
@@ -36,8 +36,8 @@ class BufanPlayer():
 		thisRemoveMsg = Global.MsgMgr.sc_this_remove(isOk=ok)
 		sendMsg(thisMoveMsg)
 		if ok == 1:
-			# TODO 转换消除线信息
-			thatRemoveMsg = Global.MsgMgr.sc_that_remove(... )
+			removesStr = ChessHelper.RemovesToStr(removes)
+			thatRemoveMsg = Global.MsgMgr.sc_that_remove(removesStr)
 			Global.GameMgr.SendOppositeMsg(self.hid, thatRemoveMsg)
 		
 		
