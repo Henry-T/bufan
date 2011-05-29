@@ -11,7 +11,7 @@ import GameManager
 
 def init(**args):
 	Global.init()
-	Global.API.register_callback( int(args['gameid']),
+	Global.API.register_callback(int(args['gameid']),
 		Logic, Render, None,
 		on_key_msg = None, 
 		on_mouse_msg = onMouseMsg, 

@@ -7,14 +7,8 @@ import LocalChessBoard
 class WaitScreen():
 	def __init__(self):
 		self.bgImg = MCreator.CreateImage("Bufan/res/world2d/background.jpg", 0, 0, 1, 1) 
-		
-		self.ui = flashui.movie('Bufan/res/gfx/WaitPanel.swf', False, True, flashui.SM_NoScale)
-		self.ui.align = flashui.Align_BottomCenter
-		self.ui.enable_keyboard = False	# ui层不接收键盘消息
-		self.now_test = None
-		
+		self.ui = MCreator.CreateMovie('Bufan/res/gfx/WaitPanel.swf')
 		self.lChessBoard = LocalChessBoard.LocalChessBoard(327, 127, 450, 450)
-		
 		self.isReady = 0
 
 	def Show(self):
@@ -48,6 +42,13 @@ class WaitScreen():
 		else:
 			self.ui.invoke("SetThatInfo", nickname, win, lose, draw, breakC)
 	
+	def SetReady(self, which, isReady):
+		if which == 0:
+			self.ui.invoke("SetThisReady", isReady)
+		else:
+			self.ui.invoke("SetThatReady", isReady)
+		
+	
 	
 	# ====================================================
 	# 本地训练游戏
@@ -76,4 +77,16 @@ def onReadyClicked():
 def onLeaveClicked():
 	import Bufan_init
 	Bufan_init.onClose(None)
-		
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

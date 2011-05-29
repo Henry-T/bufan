@@ -16,6 +16,8 @@ MsgDefine = {
 	"cs_reqLeave":{},
 	# 客户端离开
 	"sc_playerLeft":{"chid":"I"},
+	# 游戏结束
+	"sc_gameOver":{"winHid":"i"},
 	
 	# ===========================================
 	# 游戏逻辑消息 - 自方
@@ -29,7 +31,7 @@ MsgDefine = {
 	# 确认移动
 	"sc_this_move":{"isOK":"i"},
 	# 消除 lineInfo 依次是起点终点对的xy坐标，4个长度一组
-	"cs_this_remove":{"lineInfo":'s'},
+	"cs_this_remove":{"lineInfo":'s',"score":"i"},
 	# 确认消除
 	"cs_this_remove":{"isOK":"i"},
 	# 放置棋子 放置棋子数量是positions的长度除以2

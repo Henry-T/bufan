@@ -10,12 +10,7 @@ class PlayScreen():
 	def __init__(self):
 		self.bgImg = MCreator.CreateImage("Bufan/res/world2d/background_play.jpg", 0, 0, 1, 1)
 		self.bgImg.pos = (0, 0)
-		
-		self.ui = flashui.movie('Bufan/res/gfx/PlayPanel.swf', False, True, flashui.SM_NoScale)
-		self.ui.align = flashui.Align_BottomCenter
-		self.ui.enable_keyboard = False	# ui层不接收键盘消息
-		self.now_test = None
-		
+		self.ui = MCreator.CreatorMovie('Bufan/res/gfx/PlayPanel.swf')
 		self.chessBoards = []
 		self.chessBoards.append(ClientChessBoard.ClientChessBoard(514, 130, 450, 450))
 		self.chessBoards.append(MirrorChessBoard.MirrorChessBoard(52, 112, 270, 270))
@@ -74,7 +69,7 @@ def onNetThatPutBubs(poss):
 # ====================================================
 # 交互回调 - 非类成员
 # ====================================================
-def  onBreakClicked():
+def onBreakClicked():
 	import GameManager
 	GameManager.scr_wait.lChessBoard.Start()
 
@@ -83,10 +78,10 @@ def onReadyClicked():
 	import GameManager
 	wait = GameManager.scr_wait
 	if wait.isReady == 0:
-		Global.API.sender.cs_setReady(isReady=1)
+		Global.Sender.cs_setReady(isReady=1)
 		wait.isReady = 1
 	else:
-		Global.API.sender.cs_setReady(isReady=0)
+		Global.Sender.cs_setReady(isReady=0)
 		wait.isReady = 0
 	
 def onLeaveClicked():

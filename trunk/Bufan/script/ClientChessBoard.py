@@ -1,10 +1,10 @@
-import Slot
 import random
+import Global
 import MCreator
+import Rectangle
+import Slot
 import PathFinder
 import AStarGrid
-import Global
-import Rectangle
 
 class ClientChessBoard:
 	def __init__(self, x, y, sizeX, sizeY):
@@ -30,7 +30,8 @@ class ClientChessBoard:
 		self.WaitTpyes = []
 		
 		self.Score = 0
-		self.NetState = "Idle" # WaitRemove/WaitMove/WaitPrep/WaitPut
+		self.State = "WaitPrep" # WaitPrep/Idle/WaitMove/WaitClear/WaitPut
+		self.firstTime = 1
 		self.GameOver = 0
 		
 		self.RDPrepSlot(3)
@@ -69,17 +70,34 @@ class ClientChessBoard:
 			self.PickBox = None
 		
 	def OnNetPrepSlots(self, colors):
-		self.WaitTypes = colors
+		if self.State == "WaitPrep":
+			self.WaitTypes = colors
+			# TODO 预览准备状态的棋子
+			if self.firstTime:
+				self.State = "WaitPut"
+			else:
+				self.State = "Idle"
 		
 	def OnNetMove(isOk):
-		if isOk:
-			lastId = len(self.WaitMove)-1
-			dX = self.WaitMove[lastId][0]
-			dY = self.WaitMove[lastId][1]
-			self.move(dX, dY)
+		if self.State == "WaitMove":
+			if isOk:
+				lastId = len(self.WaitMove)-1
+				dX = self.WaitMove[lastId][0]
+				dY = self.WaitMove[lastId][1]
+				self.move(dX, dY)
+				if not self.checkLine(dX, dY):
+					self.State = "WaitPut"
+			
+		if score == 0:
+			self.RDPutSlot()
+			self.RDPrepSlot(3)
+			else:
+				print("移动请求失败，连接可能存在异常")
+				self.HidePickBox()
+				self.PickedSlot = None
 			
 	def OnNetRemove(isOk):
-		if isOk:
+		if isOK and self.State == "WaitClear":
 			for i in range(0, len(removes)):
 				sX = removes[i][0]
 				sY = removes[i][1]
@@ -93,20 +111,24 @@ class ClientChessBoard:
 						MathHelper.GetBig(sY, eY)):
 						self.Slots[x][y].SetType(0)
 						self.EmptySlots.append([pX, pY])
+			self.State = "Idle"
+		# 没有棋子剩余的超级人品奖励 Server 端也要做相应的处理
 			
 	def OnNetPutSlots(self, poss):
-		for i in range(0, len(self.WaitTypes)):
-			self.Slots[poss[i][0]][poss[i][1]].SetType(self.WaitTypes[i])
-		def self.WaitTypes[:]
+		if self.State == "WaitPut":
+			for i in range(0, len(self.WaitTypes)):
+				self.Slots[poss[i][0]][poss[i][1]].SetType(self.WaitTypes[i])
+			del self.WaitTypes[:]
+			self.State = "WaitPrep"
 	
 	def Click(self, mx, my):
+		if not (self.State == "Idle")
+			return
 		slotPos = self.rect.GetSubGridPos(mx, my, self.SlotW, self.SlotH)
 		if slotPos == None
 			return
-		
 		sX = slotPos[0]
 		sY = slotPos[1]
-		print("棋盘格被点击："+ str(sX) + ","+str(sY))
 		
 		if self.PickedSlot:
 			if self.Slots[sX][sY].CanPick() == 0:
@@ -114,6 +136,7 @@ class ClientChessBoard:
 				if len(aStarPath) > 0:
 					self.WaitMove = aStarPath2Move(aStarPath)
 					Global.Sender.cs_this_move(points=ChessHelper.MoveToStr(self.WaitMove))
+					self.State = "WaitMove";
 				else:
 					Global.API.show_msg("目标位置不可达")
 					return 1
@@ -148,7 +171,6 @@ class ClientChessBoard:
 			points.append(aStarPath[i].Y)
 		return points
 	
-	# TODO 修改这个函数可增加动画效果
 	def move(self, dX, dY):
 		self.Slots[dX][dY].SetType(self.PickedSlot.TypeId)
 		self.EmptySlots.remove([dX, dY])
@@ -159,17 +181,9 @@ class ClientChessBoard:
 		self.PickedSlot.SetType(0)
 		self.PickedSlot = None
 		self.HidePickBox()
-		
-		self.checkLine(dX, dY)
-			
-		if score == 0:
-			self.RDPutSlot()
-			self.RDPrepSlot(3)
-		return 1
+		# TODO 修改这个函数可增加动画效果
 	
-	# 检查得分并消除
 	def checkLine(self, x, y):
-		# TODO 检查消除可能，并请求服务器
 		# 检查
 		typeId = self.Slots[x][y].TypeId
 		vLists = []
@@ -189,7 +203,7 @@ class ClientChessBoard:
 		vLists[3] = self.validDir( 1,-1, x, y, typeId, vLists[3])
 		vLists[3] = self.validDir(-1, 1, x, y, typeId, vLists[3])
 		
-		# 计分消除
+		# 消除
 		lInfo = []
 		for i in range(0, 4):
 			vCount = len(vLists[i])
@@ -205,6 +219,8 @@ class ClientChessBoard:
 					self.Slots[pX][pY].SetType(0)
 		if len(lInfo) > 0:
 			Global.Sender.cs_this_remove(lineInfo=ChessHelper.RemovesToStr(lInfo))
+			self.State = "WaitClear"
+			
 	
 	def checkGameOver(self):
 		if len(self.EmptySlots) <= 3:
