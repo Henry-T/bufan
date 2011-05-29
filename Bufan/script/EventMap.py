@@ -6,6 +6,7 @@ EventMap = {
 	"sc_playerInfo":GameManager.onNetPlayerInfo,
 	"sc_playerReady":GameManager.onNetPlayerReady,
 	"sc_playerLeft":GameManager.onNetPlayerLeft,
+	"sc_gameOver":GameManager.onNetGameOver,
 	
 	"sc_this_prepBubs":GameManager.onNetThisPrepBubs,
 	"sc_this_move":GameManager.onNetThisMove,

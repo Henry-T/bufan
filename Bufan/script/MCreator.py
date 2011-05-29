@@ -30,8 +30,9 @@ def CreateParticle(path, posX, posY):
 	return particle;
 	
 # 创建影片
-def CreateMovie(path):	# TODO ??
-	movie = flashui.movie(path, False, True, flashui.SM_NoScale);
-	movie.enable_keyboard = False;
-	timeout = None;
+def CreateMovie(path):
+	movie = flashui.movie(path, False, True, flashui.SM_NoScale)
+	movie.align = flashui.Align_BottomCenter
+	movie.enable_keyboard = False # ui层不接收键盘消息
+	movie.now_test = None
 	
