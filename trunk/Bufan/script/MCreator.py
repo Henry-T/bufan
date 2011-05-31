@@ -5,13 +5,16 @@ import iworld2d
 import flashui
 # 游戏媒体创建
 
+SlotLayer = 2
+BGLayer = -1
+
 def initial():
-	iworld2d.init()
+	pass
 	
 
 # 创建并显示图片
-def CreateImage(path, posX, posY, scaleX, scaleY):
-	image = iworld2d.image2d(path);
+def CreateImage(path, posX, posY, scaleX, scaleY, layer):
+	image = iworld2d.image2d(path, "", layer);
 	image.pos = (posX, posY);
 	image.scale = (scaleX, scaleY);
 	image.bring_to_front();
@@ -34,5 +37,5 @@ def CreateMovie(path):
 	movie = flashui.movie(path, False, True, flashui.SM_NoScale)
 	movie.align = flashui.Align_BottomCenter
 	movie.enable_keyboard = False # ui层不接收键盘消息
-	movie.now_test = None
+	return movie
 	

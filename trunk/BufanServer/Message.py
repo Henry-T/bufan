@@ -14,6 +14,8 @@ MsgDefine = {
 	"sc_playerReady":{"hid":"i", "isReady":"i"},
 	# 客户端请求离开
 	"cs_reqLeave":{},
+	# 客户端认输
+	"cs_reqBreak":{},
 	# 客户端离开
 	"sc_playerLeft":{"chid":"I"},
 	# 游戏结束
@@ -30,12 +32,14 @@ MsgDefine = {
 	"cs_this_move":{'points':"s"},
 	# 确认移动
 	"sc_this_move":{"isOK":"i"},
+	# 请求放置
+	"cs_this_reqPut":{},
 	# 消除 lineInfo 依次是起点终点对的xy坐标，4个长度一组
-	"cs_this_remove":{"lineInfo":'s',"score":"i"},
+	"cs_this_remove":{"lineInfo":'s'},
 	# 确认消除
-	"cs_this_remove":{"isOK":"i"},
+	"sc_this_remove":{"isOK":"i","score":"i"},
 	# 放置棋子 放置棋子数量是positions的长度除以2
-	"sc_this_putBubs":{'positons':'s'},
+	"sc_this_putBubs":{'positions':'s'},
 	
 	# ===========================================
 	# 游戏逻辑消息 - 对方
@@ -45,7 +49,7 @@ MsgDefine = {
 	# 准备棋子
 	"sc_that_prepBubs":{"colors":"s"},
 	# 移动棋子
-	"sc_that_move":{"sX":"i", "sY":"i", "eX":"i", "eY":"i"},
+	"sc_that_move":{'points':"s"},
 	# 消除棋子
 	"sc_that_remove":{"lineInfo":"s", "score":"i"},
 	# 放置棋子

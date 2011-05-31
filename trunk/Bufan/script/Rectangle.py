@@ -1,5 +1,5 @@
 class Rectangle:
-	def __init__(self, x=0, y=0, height, width):
+	def __init__(self, x, y, height, width):
 		self.X = x
 		self.Y = y
 		self.Height = height
@@ -8,8 +8,8 @@ class Rectangle:
 	def InRect(self, pX, pY):
 		if pX < self.X or \
 		   pY < self.Y or \
-		   pX > self.X + self.BoardW * self.SlotW or \
-		   pY > self.Y + self.BoardH * self.SlotH:
+		   pX > self.X + self.Width or \
+		   pY > self.Y + self.Height:
 			return 0
 		else:
 			return 1
@@ -18,6 +18,6 @@ class Rectangle:
 		if not self.InRect(pX, pY):
 			return None
 		sGridPos = []
-		sGridPos.append(pX - self.X / gWidth)
-		sGridPos.append(pY - self.Y / gHeight)
+		sGridPos.append((pX - self.X) / gWidth)
+		sGridPos.append((pY - self.Y) / gHeight)
 		return sGridPos

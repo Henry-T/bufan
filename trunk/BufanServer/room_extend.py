@@ -28,3 +28,5 @@ hall_callback.use_hall(sdk_version.SDK_VERSION_1_0)
 ### 设置初始化函数
 hall_callback.init = init
 
+	
+
