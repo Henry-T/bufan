@@ -3,6 +3,7 @@
 import hall_object
 import hall_callback
 import log
+import Global
 import GameMgr
 import ChessHelper
 
@@ -17,6 +18,8 @@ class BufanRoom(hall_object.HallRoom):
 		
 		# 玩家管理器
 		self.gameMgr = GameMgr.GameMgr()
+		
+		Global.init(self)
 			
 	##  重载  ########
 	def cghall_on_player_enter_room(self, player, obj):
@@ -34,16 +37,24 @@ class BufanRoom(hall_object.HallRoom):
 			
 	def onNetSetReady(self, player, msg):
 		self.log.info("[消息处理]玩家更改状态 hid:%s 状态:%s" %(player.hid, msg.isReady))
-		self.gameMgr.SetReady(hid, msg.isReady)
+		self.gameMgr.SetReady(player.hid, msg.isReady)
 		
 	def onNetReqLeaveRoom(self, player, msg):
 		self.log.info("[消息处理]玩家请求离开房间 uid:%s hid:%s" %(player.uid, player.hid))
 		self.gameMgr.RemovePlayer(player.hid)
 		self.cghall_tell_hall_player_leave_room(player.hid)
 	
+	def onNetReqBreak(self, player, msg):
+		self.log.info("[消息处理]玩家认输 uid:%s hid:%s" %(player.uid, player.hid))
+		self.gameMgr.Break(player.hid)
+	
 	def onNetMove(self, player, msg):
 		self.log.info("[消息处理]玩家请求移动棋子 hid:%s" %(player.hid))
 		self.gameMgr.PlayerMove(player.hid, ChessHelper.StrToMove(msg.points))
+		
+	def onNetReqPut(self, player,msg):
+		self.log.info("[消息出炉]玩家请求摆放棋子 hid:%s" %(player.hid))
+		self.gameMgr.PlayerReqPut(player.hid)
 	
 	def onNetRemove(self, player, msg):
 		self.log.info("[消息处理]玩家请求消除连线 hid:%s" %(player.hid))

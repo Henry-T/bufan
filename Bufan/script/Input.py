@@ -6,5 +6,11 @@ def IsLeftClicked(buttonState, button):
 		if button == game.MOUSE_BUTTON_LEFT:
 			return 1
 	return 0
+
+def MouseX():
+	return game.mouse_x
+
+def MouseY():
+	return game.mouse_y
 	
 	

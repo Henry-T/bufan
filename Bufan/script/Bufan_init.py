@@ -30,13 +30,13 @@ def Render ():
 	pass
 
 def onMouseMsg (msg, key):
-	if Input.IsLeftClicked():
-		GameManager.MouseClick(game.mouse_x, game.mouse_y)
+	if Input.IsLeftClicked(msg, key):
+		GameManager.MouseClick(Input.MouseX(), Input.MouseY())
 	
 def onClose(eArgs):# ÍË³ö
 	GameManager.Destroy()
-	iworld2d.destroy()
-	Global.Sender.cs_req_leave()
+	Global.Sender.cs_reqLeave()
+	Global.Destroy()
 	
 	
 #def PostLogic ():

@@ -18,7 +18,7 @@ class Slot:
 			self.image = None
 			
 	def CanPick(self):
-		if self.TypeId != 0:
+		if self.GetType() != 0:
 			return 1;
 		else:
 			return 0;
@@ -31,7 +31,8 @@ class Slot:
 			
 		if self.typeId > 0:
 			pathStr = "Bufan/res/world2d/bubs.txg|" + str(typeId)
-			self.image =  MCreator.CreateImage(pathStr, self.X, self.Y, self.scaleX, self.scaleY)
+			self.image =  MCreator.CreateImage(pathStr, self.X, self.Y, self.scaleX, self.scaleY, MCreator.SlotLayer)
+			print("棋子图像设置完成")
 			
 	def GetType(self):
 		return self.typeId

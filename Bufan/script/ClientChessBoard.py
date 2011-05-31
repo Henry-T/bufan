@@ -1,10 +1,11 @@
-import random
 import Global
 import MCreator
 import Rectangle
 import Slot
 import PathFinder
 import AStarGrid
+import MathHelper
+import ChessHelper
 
 class ClientChessBoard:
 	def __init__(self, x, y, sizeX, sizeY):
@@ -20,7 +21,7 @@ class ClientChessBoard:
 		for i in range(0, self.BoardW):
 			self.Slots.append([])
 			for j in range(0, self.BoardH):
-				slot = Slot.Slot(self.X + i * self.SlotW, self.Y + j *self.SlotH)
+				slot = Slot.Slot(self.rect.X + i * self.SlotW, self.rect.Y + j *self.SlotH)
 				self.Slots[i].append(slot)
 				self.EmptySlots.append([i, j])
 				
@@ -33,10 +34,6 @@ class ClientChessBoard:
 		self.State = "WaitPrep" # WaitPrep/Idle/WaitMove/WaitClear/WaitPut
 		self.firstTime = 1
 		self.GameOver = 0
-		
-		self.RDPrepSlot(3)
-		self.RDPutSlot()
-		self.RDPrepSlot(3)
 		
 		# Wait状态族临时量
 		self.WaitMove = None
@@ -52,9 +49,6 @@ class ClientChessBoard:
 		self.Score = 0
 		self.GameOver = 0
 		self.HidePickBox()
-		self.RDPrepSlot(3)
-		self.RDPutSlot()
-		self.RDPrepSlot(3)
 		
 	def Destroy(self):
 		for i in range(0, self.BoardW):
@@ -70,71 +64,96 @@ class ClientChessBoard:
 			self.PickBox = None
 		
 	def OnNetPrepSlots(self, colors):
+		print("[客户端棋盘]准备棋子：颜色-"+str(colors)+"  状态-"+self.State)
 		if self.State == "WaitPrep":
 			self.WaitTypes = colors
 			# TODO 预览准备状态的棋子
 			if self.firstTime:
 				self.State = "WaitPut"
+				self.firstTime = 0
 			else:
 				self.State = "Idle"
 		
-	def OnNetMove(isOk):
+	def OnNetMove(self, isOk):
+		print("[客户端棋盘]移动棋子：确认-"+str(isOk)+"  状态-"+self.State)
 		if self.State == "WaitMove":
 			if isOk:
 				lastId = len(self.WaitMove)-1
+				sX = self.WaitMove[0][0]
+				sY = self.WaitMove[0][1]
 				dX = self.WaitMove[lastId][0]
 				dY = self.WaitMove[lastId][1]
-				self.move(dX, dY)
-				if not self.checkLine(dX, dY):
+				tgtType = self.Slots[self.WaitMove[0][0]][self.WaitMove[0][1]].GetType()
+				self.Slots[dX][dY].SetType(tgtType)
+				self.Slots[sX][sY].SetType(0)
+				self.EmptySlots.append([sX, sY])
+				self.EmptySlots.remove([dX, dY])
+				# 消除判定 - 这里修正了状态图
+				lInfo = self.checkLine(dX, dY)
+				if len(lInfo) > 0:
+					self.WaitRemove = lInfo
+					Global.Sender.cs_this_remove(lineInfo=ChessHelper.RemovesToStr(lInfo))
+					self.State = "WaitClear"
+				else:
+					Global.Sender.cs_this_reqPut()
 					self.State = "WaitPut"
 			
-		if score == 0:
-			self.RDPutSlot()
-			self.RDPrepSlot(3)
-			else:
-				print("移动请求失败，连接可能存在异常")
-				self.HidePickBox()
-				self.PickedSlot = None
+		self.HidePickBox()
+		self.PickedSlot = None
 			
-	def OnNetRemove(isOk):
+	def OnNetRemove(self, isOK):
+		print("[客户端棋盘]消除棋子：确认-"+str(isOK)+"  状态-"+self.State)
 		if isOK and self.State == "WaitClear":
-			for i in range(0, len(removes)):
-				sX = removes[i][0]
-				sY = removes[i][1]
-				eX = removes[i][2]
-				eY = removes[i][3]
-				for x in range(	/
-					MathHelper.GetSmall(sX, eX), /
-					MathHelper.GetBig(sX, eX)):
-					for y in range( /
-						MathHelper.GetSmall(sY, eY), /
-						MathHelper.GetBig(sY, eY)):
-						self.Slots[x][y].SetType(0)
-						self.EmptySlots.append([pX, pY])
+			for i in range(0, len(self.WaitRemove)):
+				sX = self.WaitRemove[i][0]
+				sY = self.WaitRemove[i][1]
+				eX = self.WaitRemove[i][2]
+				eY = self.WaitRemove[i][3]
+				if sX == eX:
+					for y in range(sY, eY, (1, -1)[sY<eY]):
+						if not self.SlotTypes[sX][y] == colorType:
+							Global.WriteLog("颜色不匹配消除失败: "+str(sX)+"-"+str(y))
+							return 0
+				elif sY == eY:
+					for x in range(sX, eX, (1, -1)[sX<eX]):
+						if not self.SlotTypes[x][sY] == colorType:
+							Global.WriteLog("颜色不匹配消除失败: "+str(x)+"-"+str(sY))
+							return 0
+				else:
+					stepX = (1, -1)[sX<eX]
+					stepY = (1, -1)[sY<eY]
+					for i in range(0, count):
+						if not self.SlotTypes[sX + stepX * i][sY + stepY * i] == colorType:
+							Global.WriteLog("颜色不匹配消除失败: "+str(sX + stepX * i)+"-"+str(sY + stepY * i))
+							return 0
+						self.EmptySlots.append([x, y])
 			self.State = "Idle"
 		# 没有棋子剩余的超级人品奖励 Server 端也要做相应的处理
 			
 	def OnNetPutSlots(self, poss):
+		print("[客户端棋盘]放置棋子：位置-"+str(poss)+"  状态-"+self.State)
 		if self.State == "WaitPut":
 			for i in range(0, len(self.WaitTypes)):
 				self.Slots[poss[i][0]][poss[i][1]].SetType(self.WaitTypes[i])
+				self.EmptySlots.remove([poss[i][0], poss[i][1]])
 			del self.WaitTypes[:]
 			self.State = "WaitPrep"
 	
 	def Click(self, mx, my):
-		if not (self.State == "Idle")
+		print("客户端棋盘点击：状态-"+str(self.State))
+		if not (self.State == "Idle"):
 			return
 		slotPos = self.rect.GetSubGridPos(mx, my, self.SlotW, self.SlotH)
-		if slotPos == None
+		if not slotPos:
 			return
 		sX = slotPos[0]
 		sY = slotPos[1]
 		
 		if self.PickedSlot:
 			if self.Slots[sX][sY].CanPick() == 0:
-				aStarPath = findPath()
+				aStarPath = self.findPath(sX, sY)
 				if len(aStarPath) > 0:
-					self.WaitMove = aStarPath2Move(aStarPath)
+					self.WaitMove = self.aStarPath2Move(aStarPath)
 					Global.Sender.cs_this_move(points=ChessHelper.MoveToStr(self.WaitMove))
 					self.State = "WaitMove";
 				else:
@@ -149,43 +168,30 @@ class ClientChessBoard:
 				self.PickedSlot = self.Slots[sX][sY]
 				self.ShowPickBox()
 	
-	def findPath(x, y):
+	def findPath(self, x, y):
 		pFinder = PathFinder.PathFinder()
 		obsList = []
 		for i in range(0, 9):
-			obsList.append([])
 			for j in range(0, 9):
 				obsList.append([i, j])
 		
-		for i in self.EmptySlots:
-			obsList.remove(i)
-		aStarGrid = AStarGrid.AStarGrid(self.BoardW, self.BoardH, self.GetSlotPos(self.PickedSlot), [sX, sY], obsList)
+		for i in range(0, len(self.EmptySlots)):
+			obsList.remove(self.EmptySlots[i])
+		aStarGrid = AStarGrid.AStarGrid(self.BoardW, self.BoardH, self.GetSlotPos(self.PickedSlot), [x, y], obsList)
 		pFinder.SetGrid(aStarGrid)
 		return pFinder.FindPath()		
 	
-	def aStarPath2Move(aStarPath):
+	def aStarPath2Move(self, aStarPath):
 		points = []
 		for i in range(0, len(aStarPath)):
-			points.append("[]")
-			points.append(aStarPath[i].X)
-			points.append(aStarPath[i].Y)
+			points.append([])
+			points[i].append(aStarPath[i].X)
+			points[i].append(aStarPath[i].Y)
 		return points
-	
-	def move(self, dX, dY):
-		self.Slots[dX][dY].SetType(self.PickedSlot.TypeId)
-		self.EmptySlots.remove([dX, dY])
-		
-		sX =  int((self.PickedSlot.X - self.X) / self.SlotW )
-		sY =  int((self.PickedSlot.Y - self.Y) / self.SlotH)
-		self.EmptySlots.append([sX, sY])
-		self.PickedSlot.SetType(0)
-		self.PickedSlot = None
-		self.HidePickBox()
-		# TODO 修改这个函数可增加动画效果
 	
 	def checkLine(self, x, y):
 		# 检查
-		typeId = self.Slots[x][y].TypeId
+		typeId = self.Slots[x][y].GetType()
 		vLists = []
 		for i in range(0, 4):
 			vLists.append([])
@@ -209,19 +215,12 @@ class ClientChessBoard:
 			vCount = len(vLists[i])
 			if vCount >= 5:
 				lInfo.append([])
-				lInfo[i].append(vList[i][0][0])
-				lInfo[i].append(vList[i][0][1])
-				lInfo[i].append(vList[i][len(vList[i])-1][0])
-				lInfo[i].append(vList[i][len(vList[i])-1][1])
-				for j in range(0, vCount):
-					pX = int(vLists[i][j][0])
-					pY = int(vLists[i][j][1])
-					self.Slots[pX][pY].SetType(0)
-		if len(lInfo) > 0:
-			Global.Sender.cs_this_remove(lineInfo=ChessHelper.RemovesToStr(lInfo))
-			self.State = "WaitClear"
-			
-	
+				lInfo[len(lInfo)-1].append(vLists[i][0][0])
+				lInfo[len(lInfo)-1].append(vLists[i][0][1])
+				lInfo[len(lInfo)-1].append(vLists[i][len(vLists[i])-1][0])
+				lInfo[len(lInfo)-1].append(vLists[i][len(vLists[i])-1][1])
+		return lInfo
+		
 	def checkGameOver(self):
 		if len(self.EmptySlots) <= 3:
 			self.GameOver = 1
@@ -231,14 +230,14 @@ class ClientChessBoard:
 	def validDir(self, dX,  dY, x, y, typeId, vList):
 		sX = x + dX
 		sY = y + dY
-		if sX >= 0 and sX <self.BoardW and sY >= 0 and sY < self.BoardH and self.Slots[sX][sY].TypeId == typeId:
+		if sX >= 0 and sX <self.BoardW and sY >= 0 and sY < self.BoardH and self.Slots[sX][sY].GetType() == typeId:
 			vList.append([sX, sY])
 			return self.validDir(dX, dY, sX, sY, typeId, vList)
 		else:
 			return vList
 		
 	def ShowPickBox(self):
-		self.PickBox = MCreator.CreateImage("Bufan/res/world2d/bubs.txg|PickBox",  self.PickedSlot.X, self.PickedSlot.Y, 1, 1)
+		self.PickBox = MCreator.CreateImage("Bufan/res/world2d/bubs.txg|PickBox",  self.PickedSlot.X, self.PickedSlot.Y, 1, 1, MCreator.SlotLayer)
 	
 	def HidePickBox(self):
 		if self.PickBox:
@@ -246,7 +245,7 @@ class ClientChessBoard:
 			self.PickBox  = None
 	
 	def GetSlotPos(self, slot):
-		return [(slot.X - self.X) / self.SlotW, (slot.Y - self.Y)/self.SlotH]
+		return [(slot.X - self.rect.X) / self.SlotW, (slot.Y - self.rect.Y)/self.SlotH]
 	
 		
 		

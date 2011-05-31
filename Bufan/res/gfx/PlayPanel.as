@@ -6,9 +6,11 @@ function onBreakClicked(e:Object)
 	ExternalInterface.call("GameManager.Break");
 }
 
+
 btn_break.disableFocus = true;
 btn_break.label = "认输";
 btn_break.addEventListener("click", this, "onBreakClicked");
+
 
 
 function SetThisInfo(neck:String, winC:Number, drawC:Number, lose:Number, breakC:Number)
@@ -27,5 +29,13 @@ function SetThatInfo(neck:String, winC:Number, drawC:Number, lose:Number, breakC
 	lbl_val_that_draw.text = drawC.toString();
 	lbl_val_that_lose.text = lose.toString();
 	lbl_val_that_break.text = breakC.toString();
+}
+
+function SetScore(which:Number, score:Number)
+{
+	if(which == 0)
+		lbl_val_this_score.text = score;
+	else
+		lbl_val_that_score.text = score;
 }
 
