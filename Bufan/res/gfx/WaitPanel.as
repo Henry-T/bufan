@@ -69,6 +69,15 @@ function SetThatInfo(neck:String, winC:Number, drawC:Number, lose:Number, breakC
 	lbl_val_that_break.text = breakC.toString();
 }
 
+function ClearThatInfo()
+{
+	lbl_val_that_neck.text = "---";
+	lbl_val_that_win.text = "---";
+	lbl_val_that_draw.text = "---";
+	lbl_val_that_lose.text = "---";
+	lbl_val_that_break.text = "---";
+}
+
 function SetTrainScore(score:Number)
 {
 	lbl_val_score.text = score.toString();

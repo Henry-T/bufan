@@ -20,7 +20,7 @@ class LocalChessBoard:
 		for i in range(0, self.BoardW):
 			self.Slots.append([])
 			for j in range(0, self.BoardH):
-				slot = Slot.Slot(self.rect.X + i * self.SlotW, self.rect.Y + j *self.SlotH)
+				slot = Slot.Slot(self.rect.X + i * self.SlotW, self.rect.Y + j *self.SlotH,0.86, 0.82)
 				self.Slots[i].append(slot)
 				self.EmptySlots.append([i, j])
 				
@@ -92,7 +92,7 @@ class LocalChessBoard:
 					if self.move(sX, sY)  == 0:
 						return 0
 				else:
-					Global.API.show_msg("目标位置不可达")
+					Global.Sound.play_sample("Bufan/res/Sound/Error.wav")
 					return 1
 			else:
 				self.HidePickBox()
@@ -102,6 +102,7 @@ class LocalChessBoard:
 			if self.Slots[sX][sY].CanPick() == 1:
 				self.PickedSlot = self.Slots[sX][sY]
 				self.ShowPickBox()
+				Global.Sound.play_sample("Bufan/res/Sound/Select.wav")
 	
 	def findPath(self, x, y):
 		pFinder = PathFinder.PathFinder()
@@ -142,15 +143,19 @@ class LocalChessBoard:
 			vLists[i].append([x, y])
 		# 横
 		vLists[0] = self.validDir( 1, 0, x, y, typeId, vLists[0])
+		vLists[0].reverse()
 		vLists[0] = self.validDir(-1, 0, x, y, typeId, vLists[0])
 		# 纵
 		vLists[1] = self.validDir( 0, 1, x, y, typeId, vLists[1])
+		vLists[1].reverse()
 		vLists[1] = self.validDir( 0,-1, x, y, typeId, vLists[1])
 		# 经
 		vLists[2] = self.validDir( 1, 1, x, y, typeId, vLists[2])
+		vLists[2].reverse()
 		vLists[2] = self.validDir(-1,-1, x, y, typeId, vLists[2])
 		# 纬
 		vLists[3] = self.validDir( 1,-1, x, y, typeId, vLists[3])
+		vLists[3].reverse()
 		vLists[3] = self.validDir(-1, 1, x, y, typeId, vLists[3])
 		
 		# 计分消除
@@ -169,6 +174,8 @@ class LocalChessBoard:
 		if addScore == 0:
 			self.RDPutSlot()
 			self.RDPrepSlot(3)
+		else:
+			Global.Sound.play_sample("Bufan/res/Sound/Clear.wav")
 	
 	def checkGameOver(self):
 		if len(self.EmptySlots) <= 3:
@@ -187,7 +194,7 @@ class LocalChessBoard:
 			return vList
 	
 	def ShowPickBox(self):
-		self.PickBox = MCreator.CreateImage("Bufan/res/world2d/bubs.txg|PickBox",  self.PickedSlot.X, self.PickedSlot.Y, 1, 1, MCreator.SlotLayer)
+		self.PickBox = MCreator.CreateImage("Bufan/res/world2d/bubs.txg|PickBox",  self.PickedSlot.X, self.PickedSlot.Y, 0.80, 0.76, MCreator.PickLayer)
 	
 	def HidePickBox(self):
 		if self.PickBox:

@@ -3,6 +3,7 @@ import WaitScreen
 import PlayScreen
 import Bufan_init
 import ChessHelper
+import PlayerInfo
 
 State = "Wait"
 scr_wait = None
@@ -12,9 +13,12 @@ thisReady = 0
 thatHid = None
 thatReady = 0
 
+thisInfo = None
+thatInfo = None
+
 def Initial():
 	global  scr_wait
-	scr_wait = WaitScreen.WaitScreen()
+	scr_wait = WaitScreen.WaitScreen(thisInfo, thatInfo)
 	scr_wait.Show()
 	
 def Destroy():
@@ -28,10 +32,10 @@ def Destroy():
 
 def MouseClick(mx, my):
 	global State, scr_wait, scr_play
+	Global.Sound.play_sample("Bufan/res/Sound/Click.wav")
 	if State == "Wait":
 		scr_wait.OnMouseClicked(mx, my)
 	else:
-		print("对战中点击")
 		scr_play.OnMouseClicked(mx, my)
 		
 	
@@ -40,13 +44,13 @@ def ChangeState(state):
 	if state == "Play":
 		scr_wait.Destroy()
 		scr_wait = None
-		scr_play = PlayScreen.PlayScreen()
+		scr_play = PlayScreen.PlayScreen(thisInfo, thatInfo)
 		scr_play.Show()
 		State = "Play"
 	else:
 		scr_play.Destroy()
 		scr_play = None
-		scr_wait = WaitScreen.WaitScreen()
+		scr_wait = WaitScreen.WaitScreen(thisInfo, thatInfo)
 		scr_wait.Show()
 		State = "Wait"
 
@@ -62,17 +66,25 @@ def onNetWelcome(msg):
 	thisHid = msg.chid
 	
 def onNetPlayerInfo(msg):
-	global State, thisHid, scr_wait, scr_play
+	global State, thisHid, scr_wait, scr_play, thisInfo, thatInfo
+	if msg.hid == thisHid:
+		thisInfo = PlayerInfo.PlayerInfo(msg.nickname, msg.win, msg.lose, msg.draw, msg.breakC)
+	else:
+		thatInfo = PlayerInfo.PlayerInfo(msg.nickname, msg.win, msg.lose, msg.draw, msg.breakC)
+		
 	if State == "Wait":
+		Global.Sound.play_sample("Bufan/res/Sound/Join.wav")
+		# TODO 提取到单独函数中
 		if msg.hid == thisHid:
-			scr_wait.SetPlayerInfo(0, msg.nickname, msg.win, msg.lose, msg.draw, msg.breakC)
+			# TODO 显示Avatar
+			scr_wait.SetPlayerInfo(0, thisInfo.Nickname, thisInfo.Win, thisInfo.Lose, thisInfo.Draw, thisInfo.BreakC)
 		else: 
-			scr_wait.SetPlayerInfo(1, msg.nickname, msg.win, msg.lose, msg.draw, msg.breakC)
+			scr_wait.SetPlayerInfo(1, thatInfo.Nickname, thatInfo.Win, thatInfo.Lose, thatInfo.Draw, thatInfo.BreakC)
 	else:
 		if msg.hid == thisHid:
-			scr_play.SetPlayerInfo(0, msg.nickname, msg.win, msg.lose, msg.draw, msg.breakC)
+			scr_play.SetPlayerInfo(0, thisInfo.Nickname, thisInfo.Win, thisInfo.Lose, thisInfo.Draw, thisInfo.BreakC)
 		else: 
-			scr_play.SetPlayerInfo(1, msg.nickname, msg.win, msg.lose, msg.draw, msg.breakC)
+			scr_play.SetPlayerInfo(1, thatInfo.Nickname, thatInfo.Win, thatInfo.Lose, thatInfo.Draw, thatInfo.BreakC)
 
 def onNetPlayerReady(msg):
 	global State, scr_wait, thisReady, thatReady
@@ -83,9 +95,11 @@ def onNetPlayerReady(msg):
 		else:
 			thatReady = msg.isReady
 			scr_wait.SetReady(1, msg.isReady)
-			
+	
+	Global.Sound.play_sample("Bufan/res/Sound/Start.wav")
+	
 	if thisReady and thatReady:
-		# 加入倒计时 [服务器端计时3秒后才切入游戏，其间接受客户端的退出请求(需要优化协议)]
+		# TODO 加入倒计时 [服务器端计时3秒后才切入游戏，其间接受客户端的退出请求(需要优化协议)]
 		ChangeState("Play")
 	
 def onNetPlayerLeft(msg):

@@ -5,15 +5,20 @@ import ClientChessBoard
 import MirrorChessBoard
 
 class PlayScreen():
-	def __init__(self):
+	def __init__(self, thisInfo = None, thatInfo = None):
 		self.bgImg = None
-		#self.bgImg = MCreator.CreateImage("Bufan/res/world2d/background_play.jpg", 0, 0, 1, 1, MCreator.BGLayer)
-		#self.bgImg.pos = (0, 0)
+		self.bgImg = MCreator.CreateImage("Bufan/res/world2d/PlayBg.jpg", 0, 0, 1, 1, MCreator.BGLayer)
+		self.bgImg.pos = (0, 0)
 		self.ui = MCreator.CreateMovie('Bufan/res/gfx/PlayPanel.swf')
 		self.chessBoards = []
 		self.chessBoards.append(ClientChessBoard.ClientChessBoard(514, 130, 450, 450))
 		self.chessBoards.append(MirrorChessBoard.MirrorChessBoard(52, 112, 270, 270))
 
+		if thisInfo:
+			self.SetPlayerInfo(0, thisInfo.Nickname, thisInfo.Win, thisInfo.Lose, thisInfo.Draw, thisInfo.BreakC)
+		if thatInfo:
+			self.SetPlayerInfo(1, thatInfo.Nickname, thatInfo.Win, thatInfo.Lose, thatInfo.Draw, thatInfo.BreakC)
+			
 	def Show(self):
 		#self.bgImg.bring_to_front()
 		
@@ -78,3 +83,11 @@ class PlayScreen():
 		# GameManager.scr_wait.chessBoards[1].Start()
 		pass
 		
+	def SetPlayerInfo(self, which, nickname, win, lose, draw, breakC):
+		if which == 0:
+			self.ui.invoke("SetThisInfo", nickname, win, lose, draw, breakC)
+		else:
+			self.ui.invoke("SetThatInfo", nickname, win, lose, draw, breakC)
+			
+	def OnTick(time):
+		self.ui.invoke("SetCountDownTime", time)

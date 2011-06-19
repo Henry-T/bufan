@@ -1,17 +1,32 @@
 import Global
 import MCreator
 import LocalChessBoard
+import iavatar_ui
 
 class WaitScreen():
-	def __init__(self):
-		self.bgImg = MCreator.CreateImage("Bufan/res/world2d/background.jpg", 0, 0, 1, 1, MCreator.BGLayer)
+	def __init__(self, thisInfo = None, thatInfo = None):
+		self.bgImg = MCreator.CreateImage("Bufan/res/world2d/WaitBg.jpg", 0, 0, 1, 1, MCreator.BGLayer)
 		self.ui = MCreator.CreateMovie('Bufan/res/gfx/WaitPanel.swf')
-		self.lChessBoard = LocalChessBoard.LocalChessBoard(302, 129, 450, 450)
+		self.thisAvatar = iavatar_ui.CAvatar("Bufan/res/ThisAvaBody.swf")
+		self.thatAvatar = MCreator.CreateAvatar("Bufan/res/ThatAvaBody.swf")
+		self.lChessBoard = LocalChessBoard.LocalChessBoard(319, 212, 396, 396)	# x, y, h, w
 		self.isReady = 0
 
+		if thisInfo:
+			self.SetPlayerInfo(0, thisInfo.Nickname, thisInfo.Win, thisInfo.Lose, thisInfo.Draw, thisInfo.BreakC)
+		if thatInfo:
+			self.SetPlayerInfo(1, thatInfo.Nickname, thatInfo.Win, thatInfo.Lose, thatInfo.Draw, thatInfo.BreakC)
+			
+			
 	def Show(self):
 		self.ui.active = True
 		self.ui.set_top()
+		self.thisAvatar.add_player_avatar(Global.API.get_my_avatar())
+		self.thisAvatar.show()
+		self.thisAvatar.set_pos(5, 117)
+		
+		
+		Global.Sound.play_music("Bufan/res/Music/InGame.mp3")
 
 	def Destroy(self):
 		self.bgImg.destroy()
@@ -20,7 +35,15 @@ class WaitScreen():
 		self.ui = None
 		
 		self.lChessBoard.Destroy()
-	
+		
+		if self.thisAvatar:
+			self.thisAvatar.destroy()
+			self.thisAvatar = None
+			
+		if self.thatAvatar:
+			self.thatAvatar.destroy()
+			self.thatAvatar = None
+			
 	def OnMouseClicked(self, mPosX, mPosY):
 		lastScore = self.lChessBoard.Score
 		if self.lChessBoard.Click(mPosX, mPosY) == 0:
@@ -29,7 +52,7 @@ class WaitScreen():
 		else:
 			thisScore = self.lChessBoard.Score
 			if thisScore > lastScore:
-				Global.API.show_msg(str(thisScore - lastScore))
+				# Global.API.show_msg(str(thisScore - lastScore))
 				self.ui.invoke("SetTrainScore", thisScore)
 	
 	

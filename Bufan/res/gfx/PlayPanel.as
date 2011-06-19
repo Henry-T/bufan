@@ -39,3 +39,8 @@ function SetScore(which:Number, score:Number)
 		lbl_val_that_score.text = score;
 }
 
+function SetCountDownTime(time:Number)
+{
+	lbl_countDownTime.text = time;
+}
+

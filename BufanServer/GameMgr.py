@@ -1,5 +1,6 @@
 import Global
 import BufanPlayer
+import pttimers
 
 class GameMgr:
 	def __init__(self):
@@ -9,6 +10,7 @@ class GameMgr:
 		
 		# ÓÎÏ·×´Ì¬ TODO
 		self.State = "Wait"
+		self.timer = None
 		
 	def GetPlayerByHid(self, hid):
 		for i in range(0, len(self.players)):
@@ -56,9 +58,9 @@ class GameMgr:
 		return 0
 	
 	def RemovePlayer(self, hid):
-		for i in range(0, len(self.players)):
-			if self.players[i].Hid == hid:
-				self.players.remove(self.players[i])
+		rPlayer = self.GetPlayerByHid(hid)
+		if rPlayer:
+			self.players.remove(rPlayer)
 				
 		leaveInfo = Global.MsgMgr.sc_playerLeft(chid = hid)
 		Global.Room.cghall_broadcast(leaveInfo)
@@ -83,11 +85,20 @@ class GameMgr:
 		self.players[0].StartGame()
 		self.players[1].StartGame()
 		Global.Room.cghall_tell_hall_game_start()
+		self.timer = CTimer(180, OnTick)
+		self.timer.start()
+	
+	def OnTick(time):
+		if time < 1:
+			EndGame();
 	
 	def EndGame(self):
 		self.State = "Wait"
 		self.players[0].EndGame()
 		self.players[1].EndGame()
+		if self.timer:
+			self.timer.destroy
+			self.time = None
 		Global.Room.cghall_tell_hall_game_end()
 	
 	def PlayerMove(self, hid, points):

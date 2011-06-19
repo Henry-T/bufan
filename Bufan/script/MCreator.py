@@ -3,10 +3,12 @@
 
 import iworld2d
 import flashui
+import iavatar_ui
 # 游戏媒体创建
 
 SlotLayer = 2
-BGLayer = -1
+PickLayer = 1
+BGLayer = 0
 
 def initial():
 	pass
@@ -38,4 +40,6 @@ def CreateMovie(path):
 	movie.align = flashui.Align_BottomCenter
 	movie.enable_keyboard = False # ui层不接收键盘消息
 	return movie
-	
+
+def CreateAvatar(path):
+	avatar = iavatar_ui.CAvatar(path)
