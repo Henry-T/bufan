@@ -103,6 +103,7 @@ class ClientChessBoard:
 			
 	def OnNetRemove(self, isOK):
 		print("[客户端棋盘]消除棋子：确认-"+str(isOK)+"  状态-"+self.State)
+		print("[客户端棋盘]消除任务："+str(self.WaitRemove))
 		if isOK and self.State == "WaitClear":
 			for i in range(0, len(self.WaitRemove)):
 				sX = self.WaitRemove[i][0]
@@ -110,25 +111,26 @@ class ClientChessBoard:
 				eX = self.WaitRemove[i][2]
 				eY = self.WaitRemove[i][3]
 				if sX == eX:
-					for y in range(sY, eY, (1, -1)[sY<eY]):
-						if not self.SlotTypes[sX][y] == colorType:
-							Global.WriteLog("颜色不匹配消除失败: "+str(sX)+"-"+str(y))
-							return 0
+					stepY = (-1, 1)[sY<eY]
+					for y in range(sY, eY + stepY, stepY):
+						self.Slots[sX][y].SetType(0)
+						print("消除: "+str(sX)+"-"+str(y))
+						self.EmptySlots.append([sX, y])
 				elif sY == eY:
-					for x in range(sX, eX, (1, -1)[sX<eX]):
-						if not self.SlotTypes[x][sY] == colorType:
-							Global.WriteLog("颜色不匹配消除失败: "+str(x)+"-"+str(sY))
-							return 0
+					stepX = (-1, 1)[sX<eX]
+					for x in range(sX, eX + stepX, stepX):
+						self.Slots[x][sY].SetType(0)
+						print("消除: "+str(x)+"-"+str(sY))
+						self.EmptySlots.append([x, sY])
 				else:
-					stepX = (1, -1)[sX<eX]
-					stepY = (1, -1)[sY<eY]
-					for i in range(0, count):
-						if not self.SlotTypes[sX + stepX * i][sY + stepY * i] == colorType:
-							Global.WriteLog("颜色不匹配消除失败: "+str(sX + stepX * i)+"-"+str(sY + stepY * i))
-							return 0
-						self.EmptySlots.append([x, y])
+					stepX = (-1, 1)[sX<eX]
+					stepY = (-1, 1)[sY<eY]
+					for i in range(0, abs(eX-sX)+1):
+						self.Slots[sX + stepX * i][sY + stepY * i].SetType(0)
+						print("消除: "+str(sX + stepX * i)+"-"+str(sY + stepY * i))
+						self.EmptySlots.append([sX + stepX * i, sY + stepY * i])
 			self.State = "Idle"
-		# 没有棋子剩余的超级人品奖励 Server 端也要做相应的处理
+		# TODO 没有棋子剩余的超级人品奖励 Server 端也要做相应的处理
 			
 	def OnNetPutSlots(self, poss):
 		print("[客户端棋盘]放置棋子：位置-"+str(poss)+"  状态-"+self.State)
@@ -198,15 +200,19 @@ class ClientChessBoard:
 			vLists[i].append([x, y])
 		# 横
 		vLists[0] = self.validDir( 1, 0, x, y, typeId, vLists[0])
+		vLists[0].reverse()
 		vLists[0] = self.validDir(-1, 0, x, y, typeId, vLists[0])
 		# 纵
 		vLists[1] = self.validDir( 0, 1, x, y, typeId, vLists[1])
+		vLists[1].reverse()
 		vLists[1] = self.validDir( 0,-1, x, y, typeId, vLists[1])
 		# 经
 		vLists[2] = self.validDir( 1, 1, x, y, typeId, vLists[2])
+		vLists[2].reverse()
 		vLists[2] = self.validDir(-1,-1, x, y, typeId, vLists[2])
 		# 纬
 		vLists[3] = self.validDir( 1,-1, x, y, typeId, vLists[3])
+		vLists[3].reverse()
 		vLists[3] = self.validDir(-1, 1, x, y, typeId, vLists[3])
 		
 		# 消除

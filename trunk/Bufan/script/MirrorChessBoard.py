@@ -42,18 +42,30 @@ class MirrorChessBoard:
 		self.Slots[sP[0]][sP[1]].SetType(0)
 	
 	def OnNetRemove(self, removes):
-		for i in range(0, len(removes)):
-			sX = removes[i][0]
-			sY = removes[i][1]
-			eX = removes[i][2]
-			eY = removes[i][3]
-			for x in range(	\
-				MathHelper.GetSmall(sX, eX), \
-				MathHelper.GetBig(sX, eX)):
-				for y in range( \
-					MathHelper.GetSmall(sY, eY), \
-					MathHelper.GetBig(sY, eY)):
-					self.Slots[x][y].SetType(0)
+			for i in range(0, len(removes)):
+				sX = removes[i][0]
+				sY = removes[i][1]
+				eX = removes[i][2]
+				eY = removes[i][3]
+				if sX == eX:
+					stepY = (-1, 1)[sY<eY]
+					for y in range(sY, eY + stepY, stepY):
+						self.Slots[sX][y].SetType(0)
+						print("Ïû³ý: "+str(sX)+"-"+str(y))
+						self.EmptySlots.append([sX, y])
+				elif sY == eY:
+					stepX = (-1, 1)[sX<eX]
+					for x in range(sX, eX + stepX, stepX):
+						self.Slots[x][sY].SetType(0)
+						print("Ïû³ý: "+str(x)+"-"+str(sY))
+						self.EmptySlots.append([x, sY])
+				else:
+					stepX = (-1, 1)[sX<eX]
+					stepY = (-1, 1)[sY<eY]
+					for i in range(0, abs(eX-sX)+1):
+						self.Slots[sX + stepX * i][sY + stepY * i].SetType(0)
+						print("Ïû³ý: "+str(sX + stepX * i)+"-"+str(sY + stepY * i))
+						self.EmptySlots.append([sX + stepX * i, sY + stepY * i])
 	
 	def OnNetPutSlots(self, poss):
 		for i in range(0, len(self.WaitTypes)):

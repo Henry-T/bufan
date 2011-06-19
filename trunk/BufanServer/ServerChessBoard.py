@@ -61,13 +61,15 @@ class ServerChessBoard:
 		for i in range(1, len(points)):
 			midP = points[i]
 			if startP[0] == midP[0]:
-				for y in range(startP[1], midP[1], (1, -1)[startP[1]<midP[1]]):
-					if not self.SlotTypes[startP[0], y] == 0:
+				stepY =  (-1, 1)[startP[1]<midP[1]]
+				for y in range(startP[1] + stepY, midP[1] + stepY, stepY):
+					if not self.SlotTypes[startP[0]][y] == 0:
 						Global.WriteLog("检测到障碍点:"+str(startP[0])+"-"+str(y))
 						return 0
 			else:
-				for x in range(startP[0], midP[0], (1, -1)[startP[0]<midP[0]]):
-					if not self.SlotTypes[x, startP[1]] == 0:
+				stepX = (-1, 1)[startP[0]<midP[0]]
+				for x in range(startP[0] + stepX, midP[0]+ stepX, stepX):
+					if not self.SlotTypes[x][startP[1]] == 0:
 						Global.WriteLog("检测到障碍点:"+str(x)+"-"+str(startP[1]))
 						return 0
 			startP = points[i]
@@ -98,29 +100,57 @@ class ServerChessBoard:
 				return 0
 			colorType = self.SlotTypes[sX][sY]
 			if sX == eX:
-				for y in range(sY, eY, (1, -1)[sY<eY]):
+				stepY = (-1, 1)[sY<eY]
+				for y in range(sY, eY+stepY, stepY):
 					if not self.SlotTypes[sX][y] == colorType:
 						Global.WriteLog("颜色不匹配消除失败: "+str(sX)+"-"+str(y))
 						return 0
 			elif sY == eY:
-				for x in range(sX, eX, (1, -1)[sX<eX]):
+				stepX = (-1, 1)[sY<eY]
+				for x in range(sX, eX + stepX, stepX):
 					if not self.SlotTypes[x][sY] == colorType:
 						Global.WriteLog("颜色不匹配消除失败: "+str(x)+"-"+str(sY))
 						return 0
 			else:
-				stepX = (1, -1)[sX<eX]
-				stepY = (1, -1)[sY<eY]
+				stepX = (-1, 1)[sX<eX]
+				stepY = (-1, 1)[sY<eY]
 				for i in range(0, count):
 					if not self.SlotTypes[sX + stepX * i][sY + stepY * i] == colorType:
 						Global.WriteLog("颜色不匹配消除失败: "+str(sX + stepX * i)+"-"+str(sY + stepY * i))
 						return 0
 						
-			# 确认完毕，实施消除
-			for x in range(MathHelper.GetSmall(sX, eX), MathHelper.GetBig(sY, eY)):
-				for y in range(MathHelper.GetSmall(sY, eY), MathHelper.GetBig(sY, eY)):
-					self.SlotTypes[x][y] = 0
-					self.EmptySlots.append([x,y])
+		# 确认完毕，实施消除
+		for i in range(0, len(removes)):
+			sX = removes[i][0]
+			sY = removes[i][1]
+			eX = removes[i][2]
+			eY = removes[i][3]
+			count = 0
+			if sX == eX:
+				count = abs(sY - eY)  + 1
+			else:
+				count = abs(sX - eX) + 1
+			if sX == eX:
+				stepY = (-1, 1)[sY<eY]
+				for y in range(sY, eY + stepY, stepY):
+					self.SlotTypes[sX][y] = 0
+					Global.WriteLog("消除: "+str(sX)+"-"+str(y))
+					self.EmptySlots.append([sX, y])
+			elif sY == eY:
+				stepX = (-1, 1)[sX<eX]
+				for x in range(sX, eX + stepX, stepX):
+					self.SlotTypes[x][sY] = 0
+					Global.WriteLog("消除: "+str(x)+"-"+str(sY))
+					self.EmptySlots.append([x, sY])
+			else:
+				stepX = (-1, 1)[sX<eX]
+				stepY = (-1, 1)[sY<eY]
+				for i in range(0, abs(eX-sX)+1):
+					self.SlotTypes[sX + stepX * i][sY + stepY * i] = 0
+					Global.WriteLog("消除: "+str(sX + stepX * i)+"-"+str(sY + stepY * i))
+					self.EmptySlots.append([sX + stepX * i, sY + stepY * i])
 			addScore += count
+			
 		self.Score += addScore
 		return 1
 		
